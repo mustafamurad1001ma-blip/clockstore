@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر الألعاب للأطفال - Toy Store Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>:root{--primary:#1C1C1E;--primary-hover:#2C2C2E;--secondary:#007AFF;--accent:#FF9500;--accent-light:#FFE2B8;--accent-hover:#E08600;--bg:#DCE6FF;--card-bg:rgba(255,255,255,.58);--card-border:rgba(255,255,255,.75);--text:#1C1C1E;--text-muted:#636366;--danger:#FF3B30;--info:#32ADE6;--purple:#AF52DE;--green:#34C759;--radius:24px;--inner-radius:14px;--sep:rgba(60,60,67,.14);--glass:rgba(255,255,255,.58)}
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Arabic','Tajawal','Segoe UI',sans-serif;margin:0;padding:0}
+body{color:var(--text);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;line-height:1.55;background:radial-gradient(60% 50% at 8% 6%,#8EC5FF 0%,transparent 70%),radial-gradient(55% 45% at 95% 4%,#FFC48A 0%,transparent 70%),radial-gradient(60% 55% at 85% 95%,#C3A8FF 0%,transparent 70%),radial-gradient(55% 50% at 5% 92%,#8FE8D0 0%,transparent 70%),#E4EBFB;background-attachment:fixed}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(60,60,67,.25);border-radius:6px}
+header,nav,.card,.widget,.cart-box,.product-card,.table-container,.date-picker-header,.login-card,.login-modal{-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}
+header{background:rgba(255,255,255,.55);color:var(--text);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000;border-bottom:1px solid rgba(255,255,255,.8);box-shadow:0 1px 0 rgba(60,60,67,.08)}
+.brand,.brand span{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:700;letter-spacing:-.01em;background:none;-webkit-text-fill-color:var(--text);color:var(--text);text-shadow:none}
+.date-picker-header{display:flex;align-items:center;gap:10px;padding:5px 6px 5px 14px;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.85);box-shadow:0 2px 10px rgba(31,38,135,.08)}
+.date-picker-header input{border:none;background:transparent;color:var(--text);font-weight:600;outline:none;cursor:pointer;width:auto;padding:0;box-shadow:none}
+.btn-today{background:rgba(0,122,255,.12);color:#007AFF;border:none;padding:7px 16px;border-radius:999px;font-weight:600;cursor:pointer;font-size:.86rem;white-space:nowrap;transition:background .2s,transform .1s}
+.btn-today:hover{background:rgba(0,122,255,.2)}.btn-today:active{transform:scale(.96)}
+.user-info{display:flex;align-items:center;gap:14px;font-weight:600;font-size:.95rem;color:var(--text)}
+.btn-logout{background:rgba(255,59,48,.12);color:#FF3B30;border:none;padding:8px 18px;border-radius:999px;cursor:pointer;font-weight:600;transition:background .2s,transform .1s}
+.btn-logout:hover{background:rgba(255,59,48,.2)}.btn-logout:active{transform:scale(.96)}
+.app-container{display:flex;flex:1;gap:0}
+nav{width:268px;flex-shrink:0;margin:16px;align-self:flex-start;position:sticky;top:80px;background:var(--glass);border:1px solid var(--card-border);border-radius:26px;display:flex;flex-direction:column;gap:3px;padding:12px;box-shadow:0 10px 40px rgba(31,38,135,.12)}
+.nav-btn{background:transparent;border:none;padding:12px 14px;border-radius:14px;text-align:right;font-size:.96rem;font-weight:500;color:#3A3A3C;cursor:pointer;display:flex;align-items:center;gap:12px;transition:background .2s,color .2s}
+.nav-btn:hover{background:rgba(120,120,128,.12)}
+.nav-btn.active{background:rgba(0,122,255,.14);color:#007AFF;font-weight:700}
+main{flex:1;padding:24px 24px 40px 24px;overflow-y:auto;min-width:0}
+.screen{display:none}.screen.active{display:block;animation:fadeIn .25s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--glass);border:1px solid var(--card-border);border-radius:var(--radius);padding:26px;margin-bottom:22px;box-shadow:0 8px 32px rgba(31,38,135,.10)}
+.card-title{font-size:1.4rem;font-weight:700;letter-spacing:-.01em;margin-bottom:20px;color:var(--text)}
+.tab-container{display:inline-flex;gap:2px;margin-bottom:22px;padding:3px;background:rgba(118,118,128,.16);border-radius:12px;border:none}
+.tab-btn{background:transparent;border:none;padding:8px 20px;border-radius:9px;font-size:.92rem;font-weight:600;color:#3A3A3C;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:#fff;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.widgets-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:22px}
+.widget{background:var(--glass);border:1px solid var(--card-border);border-radius:22px;padding:20px 22px;box-shadow:0 8px 28px rgba(31,38,135,.09)}
+.widget-title{font-size:.9rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+.widget-value{font-size:2.3rem;font-weight:700;letter-spacing:-.02em;line-height:1.2;color:#007AFF}
+.widget.green .widget-value{color:#34C759}.widget.red .widget-value{color:#FF3B30}.widget.purple .widget-value{color:#AF52DE}.widget.blue .widget-value{color:#007AFF}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:.86rem;font-weight:600;color:var(--text-muted)}
+input,select,textarea{width:100%;background:rgba(255,255,255,.72);border:1px solid var(--sep);color:var(--text);padding:12px 14px;border-radius:12px;font-size:.96rem;outline:none;transition:border-color .2s,box-shadow .2s}
+select option{background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:#007AFF;box-shadow:0 0 0 4px rgba(0,122,255,.18);background:#fff}
+.btn{background:#007AFF;color:#fff;border:none;padding:12px 22px;border-radius:14px;font-size:.96rem;font-weight:600;cursor:pointer;transition:filter .2s,transform .1s;box-shadow:none}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn-green{background:#34C759}.btn-red{background:#FF3B30}.btn-purple{background:#AF52DE}
+.table-container{overflow-x:auto;border-radius:16px;border:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.45)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:13px 16px;text-align:right;border-bottom:1px solid var(--sep);font-size:.93rem}
+th{background:rgba(255,255,255,.35);color:var(--text-muted);font-weight:600;font-size:.82rem;white-space:nowrap}
+tr:last-child td{border-bottom:none}tr:hover td{background:rgba(255,255,255,.5)}
+.color-badge{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid #fff;vertical-align:middle;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.pos-layout{display:grid;grid-template-columns:1fr 380px;gap:22px}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;max-height:580px;overflow-y:auto;padding:4px}
+.product-card{background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.85);border-radius:20px;padding:12px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(31,38,135,.08)}
+.product-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(31,38,135,.16)}
+.product-img{width:100%;height:110px;object-fit:cover;border-radius:14px;background:rgba(255,255,255,.7);margin-bottom:10px;border:none}
+.cart-box{background:var(--glass);border-radius:var(--radius);padding:22px;border:1px solid var(--card-border);display:flex;flex-direction:column;height:620px;box-shadow:0 10px 40px rgba(31,38,135,.12)}
+.cart-items{flex:1;overflow-y:auto;margin:12px 0;padding-right:4px}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--sep);font-size:.92rem}
+.cart-price-input{width:84px;padding:6px 8px;text-align:center}
+.login-modal{position:fixed;inset:0;background:rgba(228,235,251,.35);display:flex;align-items:center;justify-content:center;z-index:2000}
+.login-card{background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);color:var(--text);border-radius:30px;padding:40px 36px;width:100%;max-width:400px;text-align:center;box-shadow:0 30px 80px rgba(31,38,135,.25)}
+.login-card h2{font-size:1.6rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+.status-badge{padding:5px 14px;border-radius:999px;font-size:.8rem;font-weight:600}
+.status-pending{background:rgba(255,149,0,.16);color:#B86E00}.status-progress{background:rgba(0,122,255,.14);color:#0062CC}.status-done{background:rgba(52,199,89,.17);color:#1E8E3E}.status-delivered{background:rgba(175,82,222,.15);color:#8944AB}.status-cancelled{background:rgba(255,59,48,.14);color:#D70015}
+#receipt-print {
+      display: none;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #receipt-print, #receipt-print * { visibility: visible; }
+      #receipt-print {
+        display: block;
+        position: absolute;
+        left: 0; top: 0; width: 100%;
+        font-family: monospace;
+        padding: 15px;
+        color: black;
+      }
+      .receipt-header {
+        text-align: center;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+      }
+      .receipt-table {
+        width: 100%;
+        margin-bottom: 10px;
+        border-collapse: collapse;
+      }
+      .receipt-table th, .receipt-table td {
+        padding: 4px;
+        font-size: 11pt;
+        text-align: right;
+        border-bottom: 1px solid #ccc;
+      }
+      .receipt-footer {
+        text-align: center;
+        border-top: 2px dashed #000;
+        padding-top: 8px;
+        font-weight: bold;
+      }
+    }
+
+    .tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn-tool{background:rgba(0,122,255,.12);color:#007AFF;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px}
+.btn-tool:hover{background:rgba(0,122,255,.2);filter:none}
+#scan-modal{z-index:3000;padding:14px}
+#scan-modal .login-card{max-width:560px;max-height:94vh;overflow-y:auto;text-align:right;padding:24px}
+.scan-view{position:relative;aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:#111}
+.scan-view video{width:100%;height:100%;object-fit:cover}
+.scan-frame{position:absolute;inset:18%;border:3px solid rgba(255,255,255,.95);border-radius:22px;box-shadow:0 0 0 999px rgba(0,0,0,.28)}
+#scan-status{margin:12px 0 2px;padding:10px 14px;border-radius:14px;background:rgba(120,120,128,.12);font-weight:600;font-size:.92rem}
+#scan-status.ok{background:rgba(52,199,89,.17);color:#1E8E3E}#scan-status.warn{background:rgba(255,149,0,.17);color:#B86E00}
+#img-preview{width:100%;max-height:200px;object-fit:contain;border-radius:16px;margin-top:12px;background:rgba(255,255,255,.6)}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
+.res-grid .product-card{position:relative}.pct{position:absolute;top:18px;left:18px;background:#007AFF;color:#fff;font-size:.75rem;font-weight:700;padding:2px 9px;border-radius:999px}
+@media(max-width:1100px){.pos-layout{grid-template-columns:1fr}.cart-box{height:auto;min-height:420px}}
+@media(max-width:900px){header{padding:10px 14px;gap:8px;flex-wrap:wrap}header .date-picker-header{order:3;width:100%;justify-content:center}.app-container{flex-direction:column}nav{position:fixed;left:10px;right:10px;top:auto;bottom:calc(10px + env(safe-area-inset-bottom));width:auto;margin:0;flex-direction:row;overflow-x:auto;padding:6px;border-radius:24px;z-index:900;gap:2px}.nav-btn{white-space:nowrap;padding:10px 14px;font-size:.84rem;flex:0 0 auto}main{padding:10px 12px calc(96px + env(safe-area-inset-bottom))}.card{padding:18px;border-radius:20px}.widgets-grid{grid-template-columns:repeat(2,1fr);gap:12px}.widget-value{font-size:1.7rem}.form-grid{grid-template-columns:1fr}.tab-container{display:flex;overflow-x:auto}.product-grid{grid-template-columns:repeat(2,1fr);max-height:none}input,select,textarea{font-size:16px}.btn{min-height:44px}.brand{font-size:1.1rem}}
+@media(max-width:900px){main .screen div[style*="grid-template-columns"],main .screen form[style*="grid-template-columns"]{grid-template-columns:1fr!important}main .screen *{min-width:0}header .date-picker-header{flex-wrap:wrap;gap:6px;padding:6px 10px;max-width:100%}.btn-today{padding:6px 12px;font-size:.8rem}.date-picker-header input{max-width:150px}.tools .btn-tool{flex:1 1 140px;justify-content:center}}
+@media(min-width:1500px){main>.screen{max-width:1320px;margin:0 auto}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid #007AFF;outline-offset:2px}
+</style>
+
+<style id="premium-redesign">
+:root{
+ --primary:#202B45;--primary-hover:#172138;--secondary:#273653;
+ --accent:#E8793F;--accent-light:#FCE8D9;--accent-hover:#CF642E;
+ --bg:#F4EEE5;--card-bg:#FFFCF7;--card-border:#E9DED0;
+ --text:#273247;--text-muted:#7B746B;--danger:#C9564D;--info:#6D829C;
+ --purple:#82729B;--green:#68866B;--radius:22px;--inner-radius:14px;
+ --sep:#E9E1D7;--glass:rgba(255,252,247,.92)
+}
+*{font-family:'Tajawal','Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+html{scroll-behavior:smooth}
+body{
+ color:var(--text);background:
+ radial-gradient(ellipse at 8% 0%,rgba(232,121,63,.11),transparent 34%),
+ radial-gradient(ellipse at 95% 85%,rgba(39,54,83,.09),transparent 38%),#F4EEE5;
+ background-attachment:fixed
+}
+::-webkit-scrollbar-thumb{background:#C9BBAA}
+header{
+ background:rgba(255,252,247,.94);border-bottom:1px solid #E8DED2;
+ box-shadow:0 5px 24px rgba(39,50,71,.06);padding:13px 28px
+}
+.brand,.brand span{color:#273653!important;-webkit-text-fill-color:#273653!important;font-weight:900;letter-spacing:-.04em}
+.brand{font-size:1.35rem}
+.date-picker-header{background:#F7F1E9;border:1px solid #E8DED2;box-shadow:none}
+.date-picker-header input{color:#273247}
+.btn-today{background:#FCE8D9;color:#B85C2D}
+.btn-today:hover{background:#F7D9C4}
+.user-info{color:#273247}
+.btn-logout{background:#F9E6E2;color:#B84D45}
+.app-container{max-width:1800px;margin:0 auto;width:100%}
+nav{
+ background:rgba(255,252,247,.94);border:1px solid #E8DED2;border-radius:22px;
+ box-shadow:0 12px 36px rgba(39,50,71,.07);padding:11px
+}
+.nav-btn{color:#5F6470;border-radius:13px;font-weight:600;padding:12px 13px}
+.nav-btn:hover{background:#F6EEE5;color:#273653}
+.nav-btn.active{background:#273653;color:#fff;box-shadow:0 5px 14px rgba(39,54,83,.16)}
+main{padding:28px 30px 48px}
+.screen.active{animation:screenIn .28s ease-out}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card,.widget,.cart-box{
+ background:rgba(255,252,247,.94);border:1px solid #E9DED2;
+ box-shadow:0 8px 28px rgba(39,50,71,.055);backdrop-filter:blur(18px)
+}
+.card{padding:26px;border-radius:22px}
+.card-title{color:#273653;font-size:1.28rem;font-weight:800;letter-spacing:-.025em}
+.widget{border-radius:19px;padding:21px 22px;transition:transform .22s ease,box-shadow .22s ease}
+.widget:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(39,50,71,.09)}
+.widget-title{color:#77736D;font-weight:700}
+.widget-value{color:#273653!important;font-size:2.15rem;font-weight:800}
+.widget.green .widget-value{color:#68866B!important}
+.widget.red .widget-value{color:#C9564D!important}
+.widget.purple .widget-value{color:#82729B!important}
+.widget.blue .widget-value{color:#273653!important}
+.tab-container{background:#F0E9E0;border-radius:12px;padding:4px}
+.tab-btn{color:#716B63}
+.tab-btn.active{background:#273653;color:#fff;box-shadow:0 3px 9px rgba(39,54,83,.14)}
+input,select,textarea{
+ background:#FFFEFC;border:1px solid #E5DBCF;border-radius:12px;color:#273247;
+ transition:border-color .18s,box-shadow .18s,background .18s
+}
+input:focus,select:focus,textarea:focus{
+ border-color:#E8793F;box-shadow:0 0 0 3px rgba(232,121,63,.13);background:#fff
+}
+.form-group label{color:#716B63;font-weight:700}
+.btn{
+ background:#273653;color:#fff;border-radius:12px;padding:12px 21px;
+ box-shadow:0 5px 13px rgba(39,54,83,.13);transition:transform .18s,filter .18s,box-shadow .18s
+}
+.btn:hover{filter:brightness(1.08);box-shadow:0 8px 18px rgba(39,54,83,.18)}
+.btn:active{transform:scale(.975)}
+.btn-green{background:#68866B}.btn-red{background:#C9564D}.btn-purple{background:#82729B}
+.btn-tool{background:#FCE8D9;color:#B85C2D;box-shadow:none}
+.btn-tool:hover{background:#F7D9C4;filter:none;box-shadow:none}
+.table-container{border:1px solid #E9DED2;border-radius:15px;background:#FFFEFC;backdrop-filter:blur(12px)}
+th{background:#F5EFE7;color:#77736D;font-weight:800}
+th,td{border-bottom:1px solid #EEE7DE}
+tr:hover td{background:#FCF6EF}
+.product-card{
+ background:#FFFCF7;border:1px solid #E9DED2;border-radius:17px;
+ box-shadow:0 4px 15px rgba(39,50,71,.055);transition:transform .2s,box-shadow .2s,border-color .2s
+}
+.product-card:hover{transform:translateY(-4px);border-color:#E8B18F;box-shadow:0 13px 26px rgba(39,50,71,.11)}
+.product-img{background:#F5EFE7;border-radius:12px}
+.cart-box{border-radius:22px}
+.login-modal{background:rgba(31,42,62,.43);backdrop-filter:blur(8px)}
+.login-card{
+ background:#FFFCF7;border:1px solid rgba(255,255,255,.8);color:#273247;
+ border-radius:24px;box-shadow:0 24px 70px rgba(25,35,53,.2)
+}
+.login-card h2{color:#273653!important}
+.status-pending{background:#FFF0D8;color:#A66A1D}
+.status-progress{background:#E8EDF4;color:#465E7C}
+.status-done{background:#E8F1E7;color:#557A58}
+.status-delivered{background:#EEE9F4;color:#75618D}
+.status-cancelled{background:#F9E7E4;color:#B84D45}
+#scan-status{background:#F2ECE4}
+#scan-status.ok{background:#E8F1E7;color:#557A58}
+#scan-status.warn{background:#FFF0D8;color:#A66A1D}
+#color-stock-inputs,#restock-color-stock-inputs{background:#F8F3EC!important;border-color:#E9DED2!important}
+:focus-visible{outline:2px solid #E8793F;outline-offset:3px}
+@media(max-width:900px){
+ header{padding:11px 14px;background:rgba(255,252,247,.97)}
+ nav{background:rgba(255,252,247,.97);border-color:#E9DED2;box-shadow:0 8px 28px rgba(39,50,71,.14)}
+ .nav-btn.active{background:#273653;color:#fff}
+ main{padding:14px 12px calc(100px + env(safe-area-inset-bottom))}
+ .card{padding:17px;border-radius:18px}
+ .widgets-grid{gap:10px}
+ .widget{padding:15px;border-radius:16px}
+ .widget-value{font-size:1.5rem}
+ .cart-box{padding:17px}
+}
+@media(max-width:420px){
+ .widgets-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .widget-title{font-size:.78rem}
+ .widget-value{font-size:1.32rem}
+ .nav-btn{padding:9px 11px;font-size:.8rem}
+ .login-card{margin:14px;padding:28px 22px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+
+<style id="premium-redesign-v2">
+:root{--primary:#17243B;--primary-hover:#101B2E;--secondary:#243956;--accent:#E9783D;--accent-light:#FCE7D8;--accent-hover:#CF5F2B;--bg:#F3EDE4;--card-bg:#FFFCF7;--card-border:#E5D9CA;--text:#1D2A3D;--text-muted:#77766F;--glass:#FFFCF7;--radius:20px;--sep:#E9E0D5}
+body{background:#F3EDE4!important;background-image:radial-gradient(ellipse at 85% 0%,rgba(233,120,61,.10),transparent 34%)!important}
+header{background:#FFFCF7!important;border-bottom:1px solid #E7DCCD!important;box-shadow:0 4px 20px rgba(27,39,58,.07)!important}
+.brand,.brand span{color:#17243B!important;-webkit-text-fill-color:#17243B!important}
+.app-container{gap:0!important}
+nav{background:#17243B!important;border:1px solid #253752!important;border-radius:20px!important;box-shadow:0 16px 38px rgba(23,36,59,.20)!important;padding:13px!important}
+.nav-btn{color:#D9E0E9!important;border-radius:12px!important;margin:2px 0!important;font-weight:600!important}
+.nav-btn:hover{background:#263954!important;color:#fff!important}
+.nav-btn.active{background:#E9783D!important;color:#fff!important;box-shadow:0 7px 18px rgba(233,120,61,.28)!important}
+main{padding:30px 34px 52px!important}
+.card,.widget,.cart-box{background:#FFFCF7!important;border:1px solid #E6DCCD!important;box-shadow:0 7px 24px rgba(31,42,57,.055)!important;backdrop-filter:none!important}
+.card{border-radius:19px!important;position:relative}
+.card-title{color:#17243B!important;font-weight:850!important}
+.widgets-grid{gap:17px!important}
+.widget{border-radius:17px!important;position:relative;overflow:hidden;padding:22px!important}
+.widget:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:#E9783D}
+.widget.green:before{background:#68866B}.widget.red:before{background:#C9564D}.widget.purple:before{background:#82729B}.widget.blue:before{background:#243956}
+.widget-value{color:#17243B!important;font-weight:900!important}
+.btn{background:#243956!important;border-radius:11px!important;font-weight:800!important}
+.btn:hover{background:#17243B!important}
+.btn-green{background:#68866B!important}.btn-red{background:#C9564D!important}.btn-purple{background:#82729B!important}
+.btn-tool{background:#FCE7D8!important;color:#B9572B!important}
+input,select,textarea{background:#fff!important;border:1px solid #E3D8CC!important;border-radius:11px!important}
+input:focus,select:focus,textarea:focus{border-color:#E9783D!important;box-shadow:0 0 0 3px rgba(233,120,61,.15)!important}
+.tab-container{background:#F0E7DC!important}.tab-btn.active{background:#243956!important;color:#fff!important}
+.table-container{background:#FFFCF7!important;border:1px solid #E6DCCD!important}
+th{background:#F2EBE2!important;color:#626A72!important}
+tr:hover td{background:#FBF3EA!important}
+.product-card{background:#FFFCF7!important;border:1px solid #E6DCCD!important;border-radius:16px!important}
+.product-card:hover{border-color:#E9783D!important;box-shadow:0 12px 26px rgba(31,42,57,.12)!important}
+.login-modal{background:rgba(15,27,45,.62)!important}.login-card{background:#FFFCF7!important}
+#scan-modal{z-index:4000!important}#scan-modal .login-card{background:#FFFCF7!important;border:1px solid #E5D9CA!important}
+.scan-view{background:#101B2E!important;border:2px solid #E9783D!important}
+.scan-frame{border-color:#F28A50!important}
+#scan-status{border:1px solid #E6DCCD!important}
+@media(max-width:900px){nav{background:#17243B!important;border-color:#253752!important}main{padding:14px 12px calc(102px + env(safe-area-inset-bottom))!important}.nav-btn{color:#D9E0E9!important}.nav-btn.active{background:#E9783D!important}}
+</style>
+
+<style id="device-responsive-final">
+html,body{max-width:100%;overflow-x:hidden}
+button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
+.card-title{line-height:1.35;overflow-wrap:anywhere}
+.form-group label,th,td,.widget-title,.status-badge{overflow-wrap:anywhere}
+.table-container{max-width:100%;overscroll-behavior-x:contain}
+#scan-modal{padding:clamp(8px,2vw,22px)}
+#scan-modal .login-card{width:min(100%,620px);margin:auto}
+.scan-view{width:100%;max-height:58vh;min-height:220px}
+.scan-view video{object-fit:contain}
+#scan-status{line-height:1.55;overflow-wrap:anywhere}
+.tools{align-items:stretch}
+.tools .btn-tool{justify-content:center;min-height:46px}
+@media(max-width:640px){
+ body{font-size:15px;line-height:1.6}
+ header{align-items:flex-start}
+ .brand{font-size:1.05rem!important;line-height:1.35}
+ .user-info{gap:7px;font-size:.82rem;flex-wrap:wrap;justify-content:flex-end}
+ .btn-logout{padding:7px 10px;font-size:.82rem}
+ main{padding:12px 10px calc(106px + env(safe-area-inset-bottom))!important}
+ .card{padding:14px!important;margin-bottom:14px}
+ .card-title{font-size:1.05rem!important;margin-bottom:14px}
+ .widgets-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .widget{padding:12px!important;min-width:0}
+ .widget-title{font-size:.76rem!important;line-height:1.4}
+ .widget-value{font-size:clamp(1.05rem,5vw,1.4rem)!important;overflow-wrap:anywhere}
+ .form-grid{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+ .form-grid>[style*="grid-column"]{grid-column:1/-1!important}
+ input,select,textarea{font-size:16px!important;min-height:44px;padding:10px 11px}
+ .btn,.btn-tool{font-size:.88rem;padding:11px 13px;min-height:44px}
+ .tab-container{max-width:100%;width:100%;overflow-x:auto}
+ .tab-btn{white-space:nowrap;padding:9px 12px;font-size:.83rem}
+ .product-grid,.res-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+ .product-card{padding:9px}
+ .product-img{height:100px}
+ .pos-layout{grid-template-columns:minmax(0,1fr)!important}
+ .cart-box{height:auto;min-height:300px}
+ nav{left:7px!important;right:7px!important;bottom:calc(7px + env(safe-area-inset-bottom))!important;padding:5px!important}
+ .nav-btn{padding:9px 10px!important;font-size:.76rem!important}
+ .login-card{padding:18px 14px!important;margin:8px!important}
+ #scan-modal .login-card{max-height:94dvh;padding:14px!important}
+ .scan-view{min-height:210px;aspect-ratio:3/4;max-height:48dvh}
+ #scan-qr-pane .form-grid{grid-template-columns:minmax(0,1fr)!important}
+ #scan-qr-pane .form-grid .btn{width:100%}
+ .tools .btn-tool{flex:1 1 100%}
+ .table-container table{min-width:680px}
+}
+@media(min-width:641px) and (max-width:1024px){
+ body{font-size:15.5px}
+ .app-container{display:flex!important;flex-direction:row!important;align-items:flex-start}
+ nav{position:sticky!important;top:82px!important;bottom:auto!important;left:auto!important;right:auto!important;width:190px!important;min-width:190px!important;margin:12px 10px!important;display:flex!important;flex-direction:column!important;overflow:visible!important;padding:9px!important;border-radius:18px!important}
+ .nav-btn{width:100%;justify-content:flex-start;padding:10px 9px!important;font-size:.84rem!important}
+ main{flex:1;min-width:0;padding:18px 14px 34px!important}
+ .card{padding:18px!important}
+ .card-title{font-size:1.16rem}
+ .widgets-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+ .widget{padding:16px!important}
+ .widget-value{font-size:1.65rem!important}
+ .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:13px}
+ .form-grid>[style*="grid-column"]{grid-column:1/-1!important}
+ .pos-layout{grid-template-columns:minmax(0,1fr)!important}
+ .cart-box{height:auto;min-height:360px}
+ .product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .table-container{overflow-x:auto}
+ #scan-modal .login-card{width:min(92vw,650px)}
+}
+@media(min-width:1025px){
+ main{min-width:0}
+ .app-container{align-items:flex-start}
+ nav{flex:0 0 250px}
+ main .screen{width:100%}
+}
+</style>
+
+</head>
+<body>
+
+  <!-- Color Selection Modal for POS -->
+  <div id="color-select-modal" class="login-modal" style="display: none;">
+    <div class="login-card" style="width: 380px;">
+      <h3 style="color: #007AFF; margin-bottom: 12px; font-size: 1.3rem; font-weight: 800;">🎨 اختر لون المنتج للبيع</h3>
+      <p id="color-modal-prod-name" style="font-size: 0.95rem; font-weight: bold; color: var(--text-muted); margin-bottom: 18px;"></p>
+      
+      <div id="color-modal-options" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; max-height: 240px; overflow-y: auto;">
+      </div>
+
+      <button class="btn btn-red" style="width: 100%;" onclick="app.closeColorModal()">إلغاء ✕</button>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="login-modal">
+    <div class="login-card">
+      <h2 style="color: #007AFF; margin-bottom: 10px; font-size: 1.6rem; font-weight: 900;">🧸 العاب ساعة</h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 22px;">اختر المستخدم وأدخل رمز PIN للبدء</p>
+      
+      <div class="form-group" style="margin-bottom: 18px; text-align: right;">
+        <label for="login-user-select">المستخدم / العامل:</label>
+        <select id="login-user-select"></select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px; text-align: right;">
+        <label for="login-pin-input">رمز PIN لتسجيل الدخول:</label>
+        <input type="password" id="login-pin-input" maxlength="10" placeholder="****" style="text-align: center; font-size: 1.3rem; letter-spacing: 4px;" onkeydown="if(event.key==='Enter') app.login()">
+      </div>
+
+      <button class="btn" style="width: 100%; font-size: 1.05rem;" onclick="app.login()">تسجيل الدخول 🚀</button>
+      <p id="login-error" style="color: var(--danger); font-size: 0.85rem; margin-top: 12px; display: none; font-weight: 700;">رمز PIN غير صحيح!</p>
+    </div>
+  </div>
+
+  <!-- Mandatory setup: replace any missing/default 1234 PIN before allowing login -->
+  <div id="pin-setup-modal" class="login-modal" style="display:none;">
+    <div class="login-card">
+      <h2 style="color:#007AFF;margin-bottom:10px;font-size:1.45rem;font-weight:900;">🔐 إعداد كلمات المرور</h2>
+      <p style="font-size:.9rem;color:var(--text-muted);margin-bottom:20px;">لأمان النظام، يجب تعيين رمز جديد بدلاً من 1234. يمكنك استخدام رمز من 4 إلى 10 أحرف أو أرقام.</p>
+      <form onsubmit="app.completeInitialPinSetup(event)" style="display:grid;gap:14px;text-align:right;">
+        <div id="pin-setup-main-group" class="form-group">
+          <label for="pin-setup-main">كلمة مرور الدخول الرئيسية الجديدة</label>
+          <input id="pin-setup-main" type="password" minlength="4" maxlength="10" autocomplete="new-password" placeholder="4 إلى 10 أحرف أو أرقام">
+        </div>
+        <div id="pin-setup-fin-group" class="form-group">
+          <label for="pin-setup-fin">كلمة مرور القسم المالي الجديدة</label>
+          <input id="pin-setup-fin" type="password" minlength="4" maxlength="10" autocomplete="new-password" placeholder="4 إلى 10 أحرف أو أرقام">
+        </div>
+        <button type="submit" class="btn btn-green" style="width:100%;margin-top:6px;">حفظ كلمات المرور والمتابعة 🔒</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      🧸 <span>العاب ساعة</span>
+    </div>
+
+    <div class="date-picker-header">
+      <button class="btn-today" onclick="app.shiftDate(-1)" title="اليوم السابق">◀ السابق</button>
+      📅 <span>التاريخ:</span>
+      <input type="date" id="selected-date" onchange="app.changeDate(this.value)">
+      <button class="btn-today" onclick="app.setToday()">اليوم</button>
+      <button class="btn-today" onclick="app.shiftDate(1)" title="اليوم التالي">التالي ▶</button>
+    </div>
+
+    <div class="user-info">
+      👤 <span id="current-user-display" style="color: #007AFF;">المستخدم</span>
+      <button class="btn-tool" type="button" onclick="cloudSync.togglePanel()" style="border:0;cursor:pointer">☁️ سحابة / Online</button>
+      <button class="btn-logout" onclick="app.logout()">خروج</button>
+    </div>
+  </header>
+
+
+  <section id="cloud-panel" class="card" style="display:none;position:fixed;z-index:4000;top:84px;left:16px;width:min(540px,calc(100vw - 32px));max-height:82vh;overflow:auto;box-shadow:0 22px 70px rgba(0,0,0,.22);border:1px solid #E5D9CA">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><div class="card-title" style="margin:0">☁️ Online veritabanı ve canlı senkronizasyon</div><button class="btn-logout" onclick="cloudSync.togglePanel()" type="button">✕</button></div>
+    <div id="cloud-status" style="padding:10px 12px;border-radius:12px;background:#F2ECE4;margin-bottom:14px;font-weight:700">Bağlantı kurulmadı</div>
+    <div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1"><label>Supabase proje URL</label><input id="cloud-url" type="url" placeholder="https://xxxx.supabase.co" autocomplete="url"></div>
+      <div class="form-group" style="grid-column:1/-1"><label>Publishable / anon key</label><input id="cloud-key" type="password" placeholder="sb_publishable_... veya anon key" autocomplete="off"></div>
+      <div class="form-group"><label>E-posta</label><input id="cloud-email" type="email" placeholder="E-posta" autocomplete="username"></div>
+      <div class="form-group"><label>Hesap şifresi</label><input id="cloud-password" type="password" placeholder="En az 8 karakter" autocomplete="current-password"></div>
+    </div>
+    <div class="tools" style="margin-top:14px">
+      <button class="btn" type="button" onclick="cloudSync.connect()">Bağlantıyı kaydet</button>
+      <button class="btn btn-green" type="button" onclick="cloudSync.signIn()">Giriş yap</button>
+      <button class="btn btn-purple" type="button" onclick="cloudSync.signUp()">Hesap oluştur</button>
+      <button class="btn btn-red" type="button" onclick="cloudSync.signOut()">Çıkış</button>
+    </div>
+    <div style="border-top:1px solid #E9E0D5;margin:16px 0;padding-top:14px">
+      <div style="font-weight:800;margin-bottom:8px">Veri aktarımı</div>
+      <p style="font-size:.88rem;color:#77766F;margin-bottom:10px">İlk bağlantıda hangi verinin kullanılacağını sen seç. Buluttan yükleme mevcut cihazdaki kayıtların yerine geçer. Buluta gönderme ise bu cihazdaki kayıtları ortak veritabanına aktarır.</p>
+      <div class="tools"><button class="btn btn-green" type="button" onclick="cloudSync.pushLocal()">Bu cihazdaki verileri buluta aktar</button><button class="btn" type="button" onclick="cloudSync.pullCloud()">Bulut verilerini bu cihaza yükle</button></div>
+    </div>
+    <div style="font-size:.82rem;color:#77766F;line-height:1.6">Güvenlik: Ana giriş PIN'i ve finans PIN'i buluta aktarılmaz. Bulut bağlantısı için Supabase SQL kurulum dosyasındaki tablo ve güvenlik politikaları bir kez çalıştırılmalıdır. Değişiklikler giriş yapılmış cihazlarda gerçek zamanlı paylaşılır.</div>
+  </section>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Sidebar Nav -->
+    <nav>
+      <button class="nav-btn active" onclick="app.navigate('home', event)">🏠 الصفحة الرئيسية</button>
+      <button class="nav-btn" onclick="app.navigate('pos', event)">🛒 قسم البيع (POS)</button>
+      <button class="nav-btn" onclick="app.navigate('add-product', event)">➕ إضافة/تعديل منتج</button>
+      <button class="nav-btn" onclick="app.navigate('restock', event)">📦 دخول بضائع (استيراد)</button>
+      <button class="nav-btn" onclick="app.navigate('search', event)">🔍 البحث عن منتج</button>
+      <button class="nav-btn" onclick="app.navigate('orders', event)">📦 الطلبات والتوصيل</button>
+      <button class="nav-btn" onclick="app.navigate('repair', event)">🛠️ الصيانة والصلح (Tamirat)</button>
+      <button class="nav-btn" onclick="app.navigate('invoices', event)">🧾 قسم الفواتير (Invoices)</button>
+      <button class="nav-btn" onclick="app.navigate('workers', event)">👥 العمال والرواتب</button>
+      <button class="nav-btn" onclick="app.navigate('financial', event)">💰 القسم المالي</button>
+      <button class="nav-btn" onclick="app.navigate('settings', event)">⚙️ الإعدادات</button>
+    </nav>
+
+    <!-- Main Content Screens -->
+    <main>
+
+      <!-- 1. HOME SCREEN -->
+      <div id="screen-home" class="screen active">
+        <div class="widgets-grid">
+          <div class="widget green">
+            <div class="widget-title">💰 الرصيد الحالي بالكاصة (IQD)</div>
+            <div class="widget-value" id="cash-register-val">0</div>
+          </div>
+          <div class="widget red">
+            <div class="widget-title">💸 المسحوبات النقدية اليوم</div>
+            <div class="widget-value" id="cash-out-val">0</div>
+          </div>
+          <div class="widget purple">
+            <div class="widget-title">📦 المنتجات الناقصة / المنتهية</div>
+            <div class="widget-value" id="low-stock-val">0</div>
+          </div>
+          <div class="widget blue">
+            <div class="widget-title">🛒 عدد مبيعات اليوم</div>
+            <div class="widget-value" id="today-sales-count">0</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <!-- Low Stock Table -->
+          <div class="card">
+            <div class="card-title">⚠️ المنتجات التي نقص مخزونها</div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>كود</th>
+                    <th>الاسم</th>
+                    <th>اللون</th>
+                    <th>المتبقي</th>
+                  </tr>
+                </thead>
+                <tbody id="low-stock-table"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Cash Out Box -->
+          <div class="card">
+            <div class="card-title">💸 سحب مبلغ من الكاصة</div>
+            <form id="form-cash-out" onsubmit="app.handleCashOut(event)" class="form-grid">
+              <div class="form-group">
+                <label>من قام بالسحب؟</label>
+                <select id="cash-out-worker" required></select>
+              </div>
+              <div class="form-group">
+                <label>المبلغ (IQD):</label>
+                <input type="number" id="cash-out-amount" min="1" required>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>سبب السحب / الملاحظة:</label>
+                <input type="text" id="cash-out-reason" placeholder="مثلاً: شراء أكياس، مصاريف..." required>
+              </div>
+              <button type="submit" class="btn btn-red" style="grid-column: span 2; margin-top: 8px;">خصم من الكاصة ➖</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Today Transactions -->
+        <div class="card">
+          <div class="card-title">📋 حركة المبيعات والإرجاعات لهذا اليوم</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>الوقت</th>
+                  <th>النوع</th>
+                  <th>المنتجات</th>
+                  <th>المبلغ الإجمالي</th>
+                  <th>بواسطة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="today-transactions-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. POS SCREEN (SALE) -->
+      <div id="screen-pos" class="screen">
+        <div class="pos-layout">
+          <div>
+            <div class="card" style="margin-bottom: 14px; padding: 16px;">
+              <div class="form-group">
+                <label>🔍 بحث مرن وسريع (اكتب الكود، الاسم، التصنيف، السعر، أو اللون):</label>
+                <input type="text" id="pos-search-input" oninput="app.renderPosProducts()" placeholder="ابحث بكل سهولة..." autofocus>
+                <div class="tools"><button type="button" class="btn btn-tool" onclick="scanner.open('qr','pos')">📷 مسح QR / باركود</button><button type="button" class="btn btn-tool" onclick="scanner.open('img','pos')">🖼️ بحث بالصورة</button></div>
+              </div>
+            </div>
+            <div class="product-grid" id="pos-product-grid"></div>
+          </div>
+
+          <!-- Cart Box -->
+          <div class="cart-box">
+            <div class="card-title" style="margin-bottom: 6px;">🛒 سلة المبيعات</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">* يمكنك تغيير سعر البيع مباشرة لكل لعبة!</div>
+            <div class="cart-items" id="cart-items-list"></div>
+            
+            <div style="border-top: 1px dashed rgba(0,122,255,0.18); padding-top: 14px; margin-top: auto;">
+              <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; margin-bottom: 14px; color: var(--text);">
+                <span>المجموع الكلي:</span>
+                <span id="cart-total-amount" style="color: #007AFF;">0 IQD</span>
+              </div>
+              <button class="btn btn-green" style="width: 100%; font-size: 1.15rem; padding: 14px;" onclick="app.checkoutCart()">إتمام عملية البيع وطباعة 🖨️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ADD PRODUCT SCREEN -->
+      <div id="screen-add-product" class="screen">
+        <div class="card">
+          <div class="card-title">➕ إضافة أو تعديل منتج (لعبة)</div>
+          <form id="form-product" onsubmit="app.saveProduct(event)">
+            <input type="hidden" id="prod-id">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>كود المنتج (تلقائي أو اختياري):</label>
+                <input type="text" id="prod-code" placeholder="اتركه فارغاً للتوليد التلقائي">
+                <div class="tools"><button type="button" class="btn btn-tool" onclick="scanner.open('qr','add')">📷 مسح QR / باركود</button></div>
+              </div>
+              <div class="form-group">
+                <label>اسم اللعبة:</label>
+                <input type="text" id="prod-name" required>
+              </div>
+              <div class="form-group">
+                <label>الفئة / التصنيف:</label>
+                <select id="prod-category" required></select>
+              </div>
+              <div class="form-group">
+                <label>سعر الشراء (IQD):</label>
+                <input type="number" id="prod-buy-price" min="0" required>
+              </div>
+              <div class="form-group">
+                <label>سعر البيع المقترح (IQD):</label>
+                <input type="number" id="prod-sell-price" min="0" required>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>🎨 ألوان المنتج والمخزون المتاح حسب اللون:</label>
+                <div id="color-stock-inputs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; background: rgba(255,255,255,0.6); padding: 12px; border-radius: var(--inner-radius); border: 1px solid rgba(60,60,67,0.14); max-height: 190px; overflow-y: auto;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>إجمالي المخزون (محسوب تلقائياً):</label>
+                <input type="number" id="prod-stock" value="0" readonly style="background:rgba(255,255,255,0.6); font-weight:bold; color:#FF9500;">
+              </div>
+              <div class="form-group">
+                <label>صورة المنتج (اختر ملف صورة):</label>
+                <input type="file" id="prod-image-file" accept="image/*" onchange="app.handleImageUpload(event)">
+                <input type="hidden" id="prod-image-base64">
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 12px;">
+              <button type="submit" class="btn">حفظ اللعبة 💾</button>
+              <button type="button" class="btn btn-red" onclick="app.resetProductForm()">إلغاء / تفريغ</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📦 قائمة المنتجات الحالية</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>الصورة</th>
+                  <th>الكود</th>
+                  <th>الاسم</th>
+                  <th>الفئة</th>
+                  <th>اللون</th>
+                  <th>شراء</th>
+                  <th>بيع</th>
+                  <th>المخزون</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="product-list-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. RESTOCK SCREEN -->
+      <div id="screen-restock" class="screen">
+        <div class="card">
+          <div class="card-title">📦 دخول بضائع جديدة وزيادة المخزون (Ürün Stok Girişi)</div>
+          <form onsubmit="app.handleRestock(event)" class="form-grid">
+            <div class="form-group" style="grid-column: span 2;">
+              <label>اختر اللعبة (Ürün Seç):</label>
+              <select id="restock-product-id" onchange="app.onRestockSelectProduct()" required></select>
+            </div>
+            
+            <div class="form-group" style="grid-column: span 2;">
+              <label>🎨 إضافة الكميات حسب اللون (Renklere Göre Stok Ekle):</label>
+              <div id="restock-color-stock-inputs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; background: rgba(255,255,255,0.6); padding: 12px; border-radius: var(--inner-radius); border: 1px solid rgba(60,60,67,0.14); max-height: 190px; overflow-y: auto;">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>إجمالي الكمية المضافة (Toplam Eklenen):</label>
+              <input type="number" id="restock-qty" value="0" readonly style="background:rgba(255,255,255,0.6); font-weight:bold; color:#FF9500;">
+            </div>
+            <div class="form-group">
+              <label>سعر البيع الجديد (اختياري - IQD):</label>
+              <input type="number" id="restock-new-price" placeholder="اتركه للابقاء على السعر القديم">
+            </div>
+            <button type="submit" class="btn btn-green" style="grid-column: span 2; margin-top: 12px;">تأكيد إدخال البضاعة ✅ (Stok Güncelle)</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 5. SEARCH SCREEN -->
+      <div id="screen-search" class="screen">
+        <div class="card">
+          <div class="card-title">🔍 البحث عن لعبة بالمحل</div>
+          <div class="form-group" style="margin-bottom: 18px;">
+            <input type="text" id="search-page-input" oninput="app.renderSearchPage()" placeholder="ابحث بكتابة كود اللعبة، الاسم، الفئة، اللون، أو السعر..." style="font-size: 1.1rem; padding: 14px;">
+                <div class="tools"><button type="button" class="btn btn-tool" onclick="scanner.open('qr','search')">📷 مسح QR / باركود</button><button type="button" class="btn btn-tool" onclick="scanner.open('img','search')">🖼️ بحث بالصورة</button></div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>الصورة</th>
+                  <th>الكود</th>
+                  <th>الاسم</th>
+                  <th>التصنيف</th>
+                  <th>اللون</th>
+                  <th>السعر (IQD)</th>
+                  <th>المخزون المتوفر</th>
+                </tr>
+              </thead>
+              <tbody id="search-results-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS SCREEN -->
+      <div id="screen-orders" class="screen">
+        <div class="card">
+          <div class="card-title">📦 تسجيل طلب جديد</div>
+          <form onsubmit="app.saveOrder(event)" class="form-grid">
+            <div class="form-group"><label>اسم الزبون</label><input id="order-customer" required placeholder="اسم الزبون الكامل"></div>
+            <div class="form-group"><label>رقم الهاتف (واتساب)</label><input id="order-phone" required type="tel" placeholder="07xxxxxxxxx"></div>
+            <div class="form-group"><label>الموقع / العنوان</label><input id="order-location" required placeholder="المنطقة، الشارع، أقرب نقطة دالة"></div>
+            <div class="form-group"><label>تاريخ استلام الطلب</label><input id="order-date" type="date" required></div>
+            <div class="form-group"><label>تاريخ التوصيل</label><input id="order-delivery-date" type="date" required></div>
+            <div class="form-group"><label>السعر الكلي (IQD)</label><input id="order-total" type="number" min="0" step="1" required placeholder="0"></div>
+            <div class="form-group" style="grid-column:1/-1"><label>تفاصيل الطلب (اختياري)</label><textarea id="order-details" rows="2" placeholder="الألعاب المطلوبة أو ملاحظات التوصيل"></textarea></div>
+            <button type="submit" class="btn" style="grid-column:1/-1">حفظ الطلب 📦</button>
+          </form>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 سجل الطلبات</div>
+          <div class="table-container"><table><thead><tr><th>الزبون / الهاتف</th><th>الموقع</th><th>تاريخ الطلب</th><th>يوم التوصيل</th><th>السعر الكلي</th><th>التفاصيل</th><th>واتساب / اللغة</th><th>الحالة</th><th>حذف</th></tr></thead><tbody id="orders-list-table"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- 6. REPAIR SCREEN -->
+      <div id="screen-repair" class="screen">
+        <div class="widgets-grid" style="margin-bottom: 24px;">
+          <div class="widget blue">
+            <div class="widget-title">🛠️ قيد الصيانة والصلح (Bekleyen)</div>
+            <div class="widget-value" id="repair-pending-count">0</div>
+          </div>
+          <div class="widget green">
+            <div class="widget-title">✅ جاهز للتسليم (Hazır)</div>
+            <div class="widget-value" id="repair-done-count">0</div>
+          </div>
+          <div class="widget purple">
+            <div class="widget-title">💰 إيرادات الصيانة اليوم (Tamir Geliri)</div>
+            <div class="widget-value" id="repair-today-revenue">0 IQD</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🛠️ تسجيل جهاز / لعبة جديدة للصيانة (Yeni Tamir Kaydı)</div>
+          <form onsubmit="app.saveRepair(event)" class="form-grid">
+            <div class="form-group">
+              <label>اسم الزبون (Müşteri Adı):</label>
+              <input type="text" id="repair-customer" placeholder="اسم الزبون الكامل..." required>
+            </div>
+            <div class="form-group">
+              <label>رقم الهاتف (Telefon):</label>
+              <input type="text" id="repair-phone" placeholder="07XXXXXXXXX" required>
+            </div>
+            <div class="form-group">
+              <label>الموقع / العنوان:</label>
+              <input type="text" id="repair-location" placeholder="المنطقة، الشارع، أقرب نقطة دالة">
+            </div>
+            <div class="form-group">
+              <label>يوم التسليم المتوقع:</label>
+              <input type="date" id="repair-delivery-date">
+            </div>
+            <div class="form-group">
+              <label>اسم الجهاز / اللعبة (Cihaz/Oyuncak):</label>
+              <input type="text" id="repair-device" placeholder="مثلاً: سيارة شحن كبير، طائرة..." required>
+            </div>
+            <div class="form-group">
+              <label>العطل / المشكلة (Arıza/Sorun):</label>
+              <input type="text" id="repair-issue" placeholder="وصف العطل بدقة..." required>
+            </div>
+            <div class="form-group">
+              <label>المسؤول عن الصيانة / الفني (Usta/Teknisyen):</label>
+              <select id="repair-technician" required></select>
+            </div>
+            <div class="form-group">
+              <label>تكلفة قطع الغيار (Yedek Parça Maliyeti - IQD):</label>
+              <input type="number" id="repair-parts-cost" min="0" value="0" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>أجرة الصيانة والصلح المتوقعة (Tamir Ücreti - IQD):</label>
+              <input type="number" id="repair-price" min="0" placeholder="السعر الكلي للزبون">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label>ملاحظات إضافية (Notlar):</label>
+              <input type="text" id="repair-notes" placeholder="ملحقات تسلمتها مع الجهاز، أو ملاحظات خاصة...">
+            </div>
+            <button type="submit" class="btn btn-purple" style="grid-column: span 2; margin-top: 8px;">حفظ وتسجيل الصيانة 🛠️</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div class="card-title" style="margin-bottom: 0;">📋 سجل وأجهزة الصيانة والصلح (Tamirat Listesi)</div>
+            <div style="display: flex; gap: 12px;">
+              <input type="text" id="repair-search-input" oninput="app.renderRepairs()" placeholder="🔍 بحث عن زبون، جهاز، أو عطل..." style="padding: 8px 14px; font-size: 0.88rem;">
+              <select id="repair-filter-status" onchange="app.renderRepairs()" style="padding: 8px 14px; font-size: 0.88rem;">
+                <option value="all">كل الحالات (Tüm Durumlar)</option>
+                <option value="pending">قيد الصيانة (Beklemede)</option>
+                <option value="in_progress">جاري الإصلاح (Tamir Ediliyor)</option>
+                <option value="done">جاهز للتسليم (Tamamlandı/Hazır)</option>
+                <option value="delivered">تم التسليم (Teslim Edildi)</option>
+                <option value="cancelled">ملغى / تعذر الإصلاح (İptal)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>الزبون / الهاتف</th>
+                  <th>الجهاز والنوع</th>
+                  <th>مشكلة العطل</th>
+                  <th>الفني</th>
+                  <th>تكلفة القطع</th>
+                  <th>السعر الكلي</th>
+                  <th>صافي الربح</th>
+                  <th>الحالة (Durum)</th>
+                  <th>إجراءات والتحديث</th>
+                </tr>
+              </thead>
+              <tbody id="repair-list-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. INVOICES SCREEN -->
+      <div id="screen-invoices" class="screen">
+        <div class="tab-container">
+          <button class="tab-btn active" onclick="app.switchInvoiceTab('store-invoices', event)">🏪 فواتير المحل (Dükkan)</button>
+          <button class="tab-btn" onclick="app.switchInvoiceTab('worker-invoices', event)">👥 فواتير وسحوبات العمال (Çalışanlar)</button>
+        </div>
+
+        <!-- Tab 1: Store Invoices -->
+        <div id="tab-store-invoices" class="tab-content active">
+          <div class="card">
+            <div class="card-title">➕ تسجيل فاتورة / مصاريف للمحل (كهرباء، ماء، إيجار، بضائع...)</div>
+            <form onsubmit="app.addStoreInvoice(event)" class="form-grid">
+              <div class="form-group">
+                <label>نوع الفاتورة / البيان:</label>
+                <input type="text" id="inv-title" placeholder="مثلاً: فاتورة الكهرباء، إيجار المحل..." required>
+              </div>
+              <div class="form-group">
+                <label>المبلغ (IQD):</label>
+                <input type="number" id="inv-amount" min="1" required>
+              </div>
+              <div class="form-group">
+                <label>تاريخ الفاتورة:</label>
+                <input type="date" id="inv-date" required>
+              </div>
+              <div class="form-group">
+                <label>حالة الدفع:</label>
+                <select id="inv-status">
+                  <option value="unpaid">غير مدفوعة ❌</option>
+                  <option value="paid">مدفوعة من الكاصة ✅</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-green" style="grid-column: span 2; margin-top: 12px;">إضافة الفاتورة 📄</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📋 سجل فواتير ومصاريف المحل</div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>نوع الفاتورة / البيان</th>
+                    <th>المبلغ (IQD)</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="store-invoices-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Worker Invoices -->
+        <div id="tab-worker-invoices" class="tab-content" style="display:none;">
+          <div class="card">
+            <div class="card-title">➕ إضافة فاتورة / مدفوعات للعامل (راتب، سلفة، مكافأة)</div>
+            <form onsubmit="app.addWorkerInvoice(event)" class="form-grid">
+              <div class="form-group">
+                <label>اختر العامل:</label>
+                <select id="worker-inv-user-select" required></select>
+              </div>
+              <div class="form-group">
+                <label>نوع الدفع / البيان:</label>
+                <select id="worker-inv-type">
+                  <option value="راتب">راتب (Maaş)</option>
+                  <option value="سلفة">سلفة (Avans)</option>
+                  <option value="مكافأة / عمولة">مكافأة / عمولة (Prim/Bonus)</option>
+                  <option value="أخرى">مصاريف أخرى (Diğer)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>المبلغ (IQD):</label>
+                <input type="number" id="worker-inv-amount" min="1" required>
+              </div>
+              <div class="form-group">
+                <label>تاريخ الفاتورة:</label>
+                <input type="date" id="worker-inv-date" required>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>ملاحظات / بيان الفاتورة:</label>
+                <input type="text" id="worker-inv-notes" placeholder="مثلاً: دفعة من راتب شهر أكتوبر..." required>
+              </div>
+              <button type="submit" class="btn btn-purple" style="grid-column: span 2; margin-top: 12px;">حفظ فاتورة العامل 📄</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔍 عرض كشف حساب / كشف سحوبات العامل</div>
+            <div class="form-grid" style="margin-bottom: 18px;">
+              <div class="form-group">
+                <label>اختر العامل لعرض الكشف:</label>
+                <select id="inv-worker-select" onchange="app.renderWorkerInvoiceSheet()"></select>
+              </div>
+            </div>
+            <div id="worker-invoice-sheet" style="background: rgba(255,255,255,0.6); border: 1px dashed rgba(0,122,255,0.18); padding: 22px; border-radius: var(--inner-radius);">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. WORKERS SCREEN -->
+      <div id="screen-workers" class="screen">
+        <div class="card">
+          <div class="card-title">👥 إضافة عامل جديد</div>
+          <form onsubmit="app.addWorker(event)" class="form-grid">
+            <div class="form-group">
+              <label>اسم العامل:</label>
+              <input type="text" id="worker-name" required>
+            </div>
+            <div class="form-group">
+              <label>نسبة العمولات (%) إن وجد:</label>
+              <input type="number" id="worker-commission" min="0" max="100" value="0">
+            </div>
+            <button type="submit" class="btn" style="margin-top: 20px;">إضافة العامل 👤</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📊 كشف العمال والمبيعات لهذا اليوم/الأسبوع</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم العامل</th>
+                  <th>مبيعات اليوم (IQD)</th>
+                  <th>مسحوبات اليوم (IQD)</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="workers-list-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. FINANCIAL SCREEN (PIN PROTECTED) -->
+      <div id="screen-financial" class="screen">
+        <div id="fin-pin-box" class="card" style="max-width: 420px; margin: 40px auto; text-align: center;">
+          <div class="card-title" style="justify-content: center;">🔒 أدخل رمز PIN المالي للوصول</div>
+          <input type="password" id="fin-pin-input" maxlength="10" style="text-align: center; font-size: 1.6rem; margin: 18px 0; letter-spacing: 4px;" onkeydown="if(event.key==='Enter') app.authFinancial()">
+          <button class="btn btn-green" style="width: 100%;" onclick="app.authFinancial()">دخول للقسم المالي 🔓</button>
+        </div>
+
+        <div id="fin-content" style="display: none;">
+          <div class="widgets-grid">
+            <div class="widget green">
+              <div class="widget-title">💵 إجمالي مبيعات اليوم</div>
+              <div class="widget-value" id="fin-today-sales">0 IQD</div>
+            </div>
+            <div class="widget red">
+              <div class="widget-title">💸 إجمالي مصاريف/سحوبات اليوم</div>
+              <div class="widget-value" id="fin-today-expenses">0 IQD</div>
+            </div>
+            <div class="widget blue">
+              <div class="widget-title">📈 أرباح المبيعات والصيانة التقديرية</div>
+              <div class="widget-value" id="fin-today-profit">0 IQD</div>
+            </div>
+            <div class="widget purple">
+              <div class="widget-title">💰 صافي الكسب/الربح اليومي النهائي (Günlük Kazanç)</div>
+              <div class="widget-value" id="fin-today-net-gain">0 IQD</div>
+            </div>
+          </div>
+
+          <!-- Add Manual Daily Earnings Form -->
+          <div class="card">
+            <div class="card-title">➕ إضافة كسب / إيراد يومي إضافي (Günlük Ek Kazanç Ekle)</div>
+            <form onsubmit="app.addDailyEarning(event)" class="form-grid">
+              <div class="form-group">
+                <label>نوع الكسب / البيان:</label>
+                <input type="text" id="earning-title" placeholder="مثلاً: أرباح خدمات إضافية، صيانة خاصة..." required>
+              </div>
+              <div class="form-group">
+                <label>المبلغ (IQD):</label>
+                <input type="number" id="earning-amount" min="1" required>
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>ملاحظة:</label>
+                <input type="text" id="earning-notes" placeholder="تفاصيل اختيارية...">
+              </div>
+              <button type="submit" class="btn btn-green" style="grid-column: span 2;">تسجيل الكسب اليومي 💵</button>
+            </form>
+          </div>
+
+          <!-- Reset Financials Only Button -->
+          <div class="card" style="border: 1px dashed var(--danger); background: rgba(244, 63, 94, 0.05);">
+            <div class="card-title" style="color: var(--danger);">🔄 إعادة تصفير الأرقام والعمليات المالية فقط (Sadece Finansal Sıfırlama)</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+              هذا الزر يقوم بتصفير فقط الأرقام المالية (المبيعات، الفواتير، المسحوبات، الأرباح، سجل الحركة). <b>لا تؤثر إطلاقاً على المنتجات، المخزون، أو حسابات العمال.</b>
+            </p>
+            <button class="btn btn-red" onclick="app.resetFinancialsOnly()">تصفير الأرقام المالية فقط 🔄</button>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+              <div class="card-title" style="margin-bottom: 0;">📦 تفاصيل مبيعات وإيرادات اليوم بالكامل</div>
+              <button class="btn btn-red" onclick="app.clearAllSalesHistory()">مسح كافة سجلات المبيعات 🗑️</button>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>الوقت</th>
+                    <th>كود العملية / البيان</th>
+                    <th>التفاصيل</th>
+                    <th>المبلغ الإجمالي</th>
+                    <th>البائع / المسجل</th>
+                  </tr>
+                </thead>
+                <tbody id="fin-sales-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. SETTINGS SCREEN -->
+      <div id="screen-settings" class="screen">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+          <!-- Category Management -->
+          <div class="card">
+            <div class="card-title">🏷️ إدارة تصنيفات / فئات الألعاب</div>
+            <form onsubmit="app.addCategory(event)" style="display: flex; gap: 10px; margin-bottom: 18px;">
+              <input type="text" id="new-category-name" placeholder="اسم التصنيف الجديد..." required style="flex: 1;">
+              <button type="submit" class="btn btn-green">إضافة ➕</button>
+            </form>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>اسم التصنيف</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="categories-list-table"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Change PINs & Financial Password Settings -->
+          <div class="card">
+            <div class="card-title">⚙️ إعدادات النظام وتغيير رمز PIN المالي والبدء</div>
+            <form onsubmit="app.updatePins(event)" class="form-grid" style="grid-template-columns: 1fr;">
+              <div style="padding:14px;border:1px solid var(--sep);border-radius:14px;background:rgba(255,255,255,.35);">
+                <div style="font-weight:800;margin-bottom:10px;">🔑 تغيير كلمة مرور الدخول الرئيسية</div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label for="current-main-pin">كلمة المرور الرئيسية الحالية</label>
+                  <input type="password" id="current-main-pin" maxlength="10" autocomplete="current-password" placeholder="أدخل كلمة المرور الحالية">
+                </div>
+                <div class="form-group">
+                  <label for="set-main-pin">كلمة المرور الرئيسية الجديدة</label>
+                  <input type="password" id="set-main-pin" minlength="4" maxlength="10" autocomplete="new-password" placeholder="4 إلى 10 أحرف أو أرقام">
+                </div>
+              </div>
+              <div style="padding:14px;border:1px solid var(--sep);border-radius:14px;background:rgba(255,255,255,.35);">
+                <div style="font-weight:800;margin-bottom:10px;">💳 تغيير كلمة مرور القسم المالي</div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label for="current-fin-pin">كلمة المرور المالية الحالية</label>
+                  <input type="password" id="current-fin-pin" maxlength="10" autocomplete="current-password" placeholder="أدخل كلمة المرور المالية الحالية">
+                </div>
+                <div class="form-group">
+                  <label for="set-fin-pin">كلمة المرور المالية الجديدة</label>
+                  <input type="password" id="set-fin-pin" minlength="4" maxlength="10" autocomplete="new-password" placeholder="4 إلى 10 أحرف أو أرقام">
+                </div>
+              </div>
+              <p style="font-size:.82rem;color:var(--text-muted);">يمكنك تغيير كل كلمة مرور بشكل مستقل. اترك القسم الذي لا تريد تغييره فارغاً. يلزم إدخال كلمة المرور الحالية للقسم المراد تغييره.</p>
+              <button type="submit" class="btn btn-green" style="margin-top: 12px;">حفظ تغييرات كلمات المرور 💾</button>
+            </form>
+
+            <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(0,122,255,0.18);">
+
+            <div class="card-title" style="color: var(--danger);">⚠️ منطقة الخطر والنسخ الاحتياطي</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn btn-purple" onclick="app.exportData()">تصدير نسخة احتياطية 📥</button>
+              <label class="btn" style="background: linear-gradient(135deg, #0284C7, #0369A1); color: white; cursor: pointer; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.25);">
+                استيراد نسخة احتياطية 📤
+                <input type="file" accept=".json" onchange="app.importData(event)" style="display: none;">
+              </label>
+              <button class="btn btn-red" onclick="app.resetAllData()">تصفير وتجهيز النظام بالكامل 🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Thermal Receipt Layout for Printing -->
+  <div id="receipt-print">
+    <div class="receipt-header">
+      <h2 style="font-size:16pt; font-weight:bold;">العاب ساعة</h2>
+      <p style="font-size:10pt;">وصل مبيعات / الفاتورة</p>
+      <p style="font-size:10pt;">التاريخ والوقت: <span id="rec-datetime"></span></p>
+      <p style="font-size:10pt;">البائع: <span id="rec-seller"></span></p>
+    </div>
+
+    <table class="receipt-table">
+      <thead>
+        <tr>
+          <th>اسم المنتج</th>
+          <th>كود/اللون</th>
+          <th>العدد</th>
+          <th>السعر</th>
+          <th>المجموع</th>
+        </tr>
+      </thead>
+      <tbody id="rec-items"></tbody>
+    </table>
+
+    <div class="receipt-footer">
+      <p style="font-size:13pt;">المجموع الكلي: <span id="rec-total"></span> IQD</p>
+      <p style="margin-top:8px; font-size:11pt; font-weight:bold;">العاب ساعة</p>
+      <p style="font-size:9pt; font-weight:normal;">شكراً لزيارتكم! أهلاً وسهلاً بكم</p>
+    </div>
+  </div>
+
+  <script>
+    class ToyStoreApp {
+      constructor() {
+        let savedPins = {};
+        try { savedPins = JSON.parse(localStorage.getItem('toy_pins') || '{}') || {}; } catch (e) { savedPins = {}; }
+        this.pins = {
+          main: String(savedPins.main == null ? '' : savedPins.main),
+          fin: String(savedPins.fin == null ? '' : savedPins.fin)
+        };
+        this.pinSetupNeeded = !this.pins.main || this.pins.main === '1234' || !this.pins.fin || this.pins.fin === '1234';
+        this.categories = JSON.parse(localStorage.getItem('toy_categories')) || ['سيارات', 'عرائس', 'ألعاب تعليمية', 'مجسمات', 'ألعاب إلكترونية'];
+        this.products = JSON.parse(localStorage.getItem('toy_products')) || [
+          { id: '101', code: 'TOY-101', name: 'سيارة سباق ريموت', category: 'سيارات', buyPrice: 5000, sellPrice: 10000, colorHex: '#EF4444', colorName: 'أحمر', colorStocks: { 'أحمر': 5, 'أزرق': 3 }, stock: 8, image: '' },
+          { id: '102', code: 'TOY-102', name: 'دمية أطفال ناطقة', category: 'عرائس', buyPrice: 8000, sellPrice: 15000, colorHex: '#EC4899', colorName: 'وردي', colorStocks: { 'وردي': 3 }, stock: 3, image: '' }
+        ];
+
+        this.availableColors = [
+          { name: 'أحمر', hex: '#EF4444' },
+          { name: 'أزرق', hex: '#3B82F6' },
+          { name: 'أخضر', hex: '#10B981' },
+          { name: 'أصفر', hex: '#F59E0B' },
+          { name: 'وردي', hex: '#EC4899' },
+          { name: 'بنفسجي', hex: '#8B5CF6' },
+          { name: 'برتقالي', hex: '#F97316' },
+          { name: 'أسود', hex: '#1E293B' },
+          { name: 'أبيض', hex: '#CBD5E1' },
+          { name: 'رصاصي', hex: '#64748B' },
+          { name: 'بني', hex: '#78350F' },
+          { name: 'ذهبي', hex: '#D97706' }
+        ];
+
+        this.workers = JSON.parse(localStorage.getItem('toy_workers')) || [{ id: '1', name: 'المدير' }, { id: '2', name: 'علي' }];
+        this.transactions = JSON.parse(localStorage.getItem('toy_transactions')) || [];
+        this.cashOuts = JSON.parse(localStorage.getItem('toy_cashouts')) || [];
+        this.repairs = JSON.parse(localStorage.getItem('toy_repairs')) || [];
+        this.orders = JSON.parse(localStorage.getItem('toy_orders')) || [];
+        this.storeInvoices = JSON.parse(localStorage.getItem('toy_store_invoices')) || [];
+        this.workerInvoices = JSON.parse(localStorage.getItem('toy_worker_invoices')) || [];
+        this.dailyEarnings = JSON.parse(localStorage.getItem('toy_daily_earnings')) || [];
+        
+        this.currentUser = null;
+        this.currentDate = new Date().toISOString().split('T')[0];
+        this.cart = [];
+        this.finAuthed = false;
+        this.selectedProductForColor = null;
+
+        this.init();
+        this.enforcePinSetup();
+      }
+
+      init() {
+        document.getElementById('selected-date').value = this.currentDate;
+        document.getElementById('inv-date').value = this.currentDate;
+        document.getElementById('worker-inv-date').value = this.currentDate;
+        document.getElementById('order-date').value = this.currentDate;
+        this.populateUserDropdown();
+        this.populateCategoriesDropdown();
+        this.renderColorStockInputs();
+        this.renderAll();
+      }
+
+      enforcePinSetup() {
+        if (!this.pinSetupNeeded) return;
+        const needsMain = !this.pins.main || this.pins.main === '1234';
+        const needsFin = !this.pins.fin || this.pins.fin === '1234';
+        document.getElementById('login-modal').style.display = 'none';
+        document.getElementById('pin-setup-modal').style.display = 'flex';
+        document.getElementById('pin-setup-main-group').style.display = needsMain ? 'flex' : 'none';
+        document.getElementById('pin-setup-fin-group').style.display = needsFin ? 'flex' : 'none';
+        document.getElementById('pin-setup-main').required = needsMain;
+        document.getElementById('pin-setup-fin').required = needsFin;
+        document.getElementById(needsMain ? 'pin-setup-main' : 'pin-setup-fin').focus();
+      }
+
+      completeInitialPinSetup(e) {
+        e.preventDefault();
+        const needsMain = !this.pins.main || this.pins.main === '1234';
+        const needsFin = !this.pins.fin || this.pins.fin === '1234';
+        const mainPin = document.getElementById('pin-setup-main').value.trim();
+        const finPin = document.getElementById('pin-setup-fin').value.trim();
+        if (needsMain && (mainPin.length < 4 || mainPin.length > 10 || mainPin === '1234')) {
+          alert('يرجى اختيار كلمة مرور رئيسية من 4 إلى 10 أحرف أو أرقام، ولا تستخدم 1234.');
+          return;
+        }
+        if (needsFin && (finPin.length < 4 || finPin.length > 10 || finPin === '1234')) {
+          alert('يرجى اختيار كلمة مرور مالية من 4 إلى 10 أحرف أو أرقام، ولا تستخدم 1234.');
+          return;
+        }
+        if (needsMain) this.pins.main = mainPin;
+        if (needsFin) this.pins.fin = finPin;
+        if (!this.saveStorage()) return;
+        this.pinSetupNeeded = false;
+        document.getElementById('pin-setup-modal').style.display = 'none';
+        document.getElementById('login-modal').style.display = 'flex';
+        document.getElementById('pin-setup-main').value = '';
+        document.getElementById('pin-setup-fin').value = '';
+        alert('تم تعيين كلمات المرور الجديدة وتعطيل 1234. يمكنك الآن تسجيل الدخول بأمان.');
+      }
+
+      saveStorage() {
+        const records = {
+          toy_pins: this.pins,
+          toy_categories: this.categories,
+          toy_products: this.products,
+          toy_workers: this.workers,
+          toy_transactions: this.transactions,
+          toy_cashouts: this.cashOuts,
+          toy_repairs: this.repairs,
+          toy_orders: this.orders,
+          toy_store_invoices: this.storeInvoices,
+          toy_worker_invoices: this.workerInvoices,
+          toy_daily_earnings: this.dailyEarnings
+        };
+        try {
+          // Serialize first, then write. This prevents half-written records when quota is exceeded.
+          const serialized = Object.fromEntries(
+            Object.entries(records).map(([key, value]) => [key, JSON.stringify(value)])
+          );
+          for (const [key, value] of Object.entries(serialized)) localStorage.setItem(key, value);
+          if (window.cloudSync && !window.cloudSync.suppress) window.cloudSync.schedule(this);
+          return true;
+        } catch (err) {
+          console.error('Storage save failed:', err);
+          const quota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
+          if (quota) {
+            alert('Kaydedilemedi: Telefon/tarayıcı hafızası dolu. Ürün fotoğraflarını küçültün veya Ayarlar bölümünden önce yedek alın. Hiçbir verinizi silmedim.');
+          } else {
+            alert('Kaydetme başarısız. Tarayıcı depolamasına izin verildiğini kontrol edin; gizli sekme kullanmayın.');
+          }
+          return false;
+        }
+      }
+
+      renderColorStockInputs(selectedColorStocks = {}) {
+        const container = document.getElementById('color-stock-inputs');
+        if (!container) return;
+
+        container.innerHTML = this.availableColors.map(c => {
+          const val = selectedColorStocks[c.name] || 0;
+          return `
+            <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.6); padding:6px 10px; border-radius:8px; border:1px solid rgba(60,60,67,0.14);">
+              <span class="color-badge" style="background:${c.hex};"></span>
+              <span style="font-size:0.82rem; font-weight:700; flex:1; color:var(--text);">${c.name}</span>
+              <input type="number" class="color-qty-input" data-color="${c.name}" data-hex="${c.hex}" min="0" value="${val}" style="width:48px; padding:3px; font-size:0.85rem; text-align:center; background:rgba(255,255,255,0.6);" onchange="app.calcTotalStockFromColors()">
+            </div>
+          `;
+        }).join('');
+
+        this.calcTotalStockFromColors();
+      }
+
+      calcTotalStockFromColors() {
+        const inputs = document.querySelectorAll('.color-qty-input');
+        let total = 0;
+        inputs.forEach(inp => {
+          total += Number(inp.value) || 0;
+        });
+        const stockInput = document.getElementById('prod-stock');
+        if (stockInput) stockInput.value = total;
+      }
+
+      populateCategoriesDropdown() {
+        const catSelect = document.getElementById('prod-category');
+        if (!catSelect) return;
+        catSelect.innerHTML = this.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+      }
+
+      addCategory(e) {
+        e.preventDefault();
+        const input = document.getElementById('new-category-name');
+        const name = input.value.trim();
+        if (name && !this.categories.includes(name)) {
+          this.categories.push(name);
+          this.saveStorage();
+          this.populateCategoriesDropdown();
+          this.renderCategoriesList();
+          input.value = '';
+        }
+      }
+
+      deleteCategory(categoryName) {
+        this.categories = this.categories.filter(c => c !== categoryName);
+        this.saveStorage();
+        this.populateCategoriesDropdown();
+        this.renderCategoriesList();
+      }
+
+      renderCategoriesList() {
+        const tbody = document.getElementById('categories-list-table');
+        if (!tbody) return;
+        tbody.innerHTML = this.categories.map(c => {
+          const safeCat = c.replace(/'/g, "\\'");
+          return `
+          <tr>
+            <td><b>${c}</b></td>
+            <td>
+              <button type="button" class="btn btn-red" style="padding:4px 10px; font-size:0.75rem;" onclick="app.deleteCategory('${safeCat}')">حذف 🗑️</button>
+            </td>
+          </tr>
+        `}).join('');
+      }
+
+      populateUserDropdown() {
+        const select = document.getElementById('login-user-select');
+        const cashSelect = document.getElementById('cash-out-worker');
+        const invWorkerSelect = document.getElementById('worker-inv-user-select');
+        const sheetWorkerSelect = document.getElementById('inv-worker-select');
+        const repairTechSelect = document.getElementById('repair-technician');
+
+        const options = this.workers.map(w => `<option value="${w.name}">${w.name}</option>`).join('');
+        if (select) select.innerHTML = options;
+        if (cashSelect) cashSelect.innerHTML = options;
+        if (invWorkerSelect) invWorkerSelect.innerHTML = options;
+        if (sheetWorkerSelect) sheetWorkerSelect.innerHTML = options;
+        if (repairTechSelect) repairTechSelect.innerHTML = options;
+      }
+
+      login() {
+        const user = document.getElementById('login-user-select').value;
+        const pin = document.getElementById('login-pin-input').value;
+
+        if (pin === this.pins.main && !!this.pins.main && this.pins.main !== '1234') {
+          this.currentUser = user;
+          document.getElementById('current-user-display').innerText = user;
+          document.getElementById('login-modal').style.display = 'none';
+          document.getElementById('login-pin-input').value = '';
+          document.getElementById('login-error').style.display = 'none';
+          this.renderAll();
+        } else {
+          document.getElementById('login-error').style.display = 'block';
+        }
+      }
+
+      logout() {
+        this.currentUser = null;
+        this.finAuthed = false;
+        document.getElementById('fin-content').style.display = 'none';
+        document.getElementById('fin-pin-box').style.display = 'block';
+        document.getElementById('login-modal').style.display = 'flex';
+      }
+
+      changeDate(val) {
+        this.currentDate = val;
+        this.renderAll();
+      }
+
+      setToday() {
+        this.currentDate = new Date().toISOString().split('T')[0];
+        document.getElementById('selected-date').value = this.currentDate;
+        this.renderAll();
+      }
+
+      shiftDate(days) {
+        const d = new Date(this.currentDate);
+        d.setDate(d.getDate() + days);
+        this.currentDate = d.toISOString().split('T')[0];
+        document.getElementById('selected-date').value = this.currentDate;
+        this.renderAll();
+      }
+
+      navigate(screenName, event) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(`screen-${screenName}`).classList.add('active');
+        if (event) event.currentTarget.classList.add('active');
+
+        if (screenName === 'orders') this.renderOrders();
+        if (screenName === 'repair') this.renderRepairs();
+        if (screenName === 'financial' && !this.finAuthed) {
+          document.getElementById('fin-content').style.display = 'none';
+          document.getElementById('fin-pin-box').style.display = 'block';
+        }
+      }
+
+      authFinancial() {
+        const pin = document.getElementById('fin-pin-input').value;
+        if (pin === this.pins.fin && !!this.pins.fin && this.pins.fin !== '1234') {
+          this.finAuthed = true;
+          document.getElementById('fin-pin-box').style.display = 'none';
+          document.getElementById('fin-content').style.display = 'block';
+          document.getElementById('fin-pin-input').value = '';
+          this.renderFinancials();
+        } else {
+          alert('رمز PIN المالي غير صحيح!');
+        }
+      }
+
+      updatePins(e) {
+        e.preventDefault();
+        const currentMain = document.getElementById('current-main-pin').value.trim();
+        const newMain = document.getElementById('set-main-pin').value.trim();
+        const currentFin = document.getElementById('current-fin-pin').value.trim();
+        const newFin = document.getElementById('set-fin-pin').value.trim();
+        if (!newMain && !newFin) {
+          alert('أدخل كلمة مرور جديدة واحدة على الأقل.');
+          return;
+        }
+        const validNewPin = value => value.length >= 4 && value.length <= 10 && value !== '1234';
+        if (newMain) {
+          if (currentMain !== this.pins.main) {
+            alert('كلمة المرور الرئيسية الحالية غير صحيحة. لم يتم إجراء أي تغيير.');
+            return;
+          }
+          if (!validNewPin(newMain)) {
+            alert('كلمة المرور الرئيسية الجديدة يجب أن تكون من 4 إلى 10 أحرف أو أرقام، ولا يمكن أن تكون 1234.');
+            return;
+          }
+        }
+        if (newFin) {
+          if (currentFin !== this.pins.fin) {
+            alert('كلمة المرور المالية الحالية غير صحيحة. لم يتم إجراء أي تغيير.');
+            return;
+          }
+          if (!validNewPin(newFin)) {
+            alert('كلمة المرور المالية الجديدة يجب أن تكون من 4 إلى 10 أحرف أو أرقام، ولا يمكن أن تكون 1234.');
+            return;
+          }
+        }
+        if (newMain) this.pins.main = newMain;
+        if (newFin) this.pins.fin = newFin;
+        if (!this.saveStorage()) return;
+        ['current-main-pin','set-main-pin','current-fin-pin','set-fin-pin'].forEach(id => { document.getElementById(id).value = ''; });
+        alert('تم تحديث كلمات المرور المحددة بنجاح.');
+      }
+
+      renderAll() {
+        this.renderHome();
+        this.renderPosProducts();
+        this.renderCart();
+        this.renderProductList();
+        this.renderRestockDropdown();
+        this.renderSearchPage();
+        this.renderRepairs();
+        this.renderStoreInvoices();
+        this.renderWorkerInvoiceSheet();
+        this.renderWorkersList();
+        this.renderCategoriesList();
+        if (this.finAuthed) this.renderFinancials();
+      }
+
+      renderHome() {
+        const todayTxs = this.transactions.filter(t => t.date === this.currentDate);
+        const todayOuts = this.cashOuts.filter(c => c.date === this.currentDate);
+
+        const salesTotal = todayTxs.reduce((sum, t) => sum + (t.type === 'SALE' ? t.total : -t.total), 0);
+        const outTotal = todayOuts.reduce((sum, c) => sum + c.amount, 0);
+
+        document.getElementById('cash-register-val').innerText = (salesTotal - outTotal).toLocaleString();
+        document.getElementById('cash-out-val').innerText = outTotal.toLocaleString();
+        document.getElementById('today-sales-count').innerText = todayTxs.filter(t => t.type === 'SALE').length;
+
+        const lowStockProducts = this.products.filter(p => p.stock <= 2);
+        document.getElementById('low-stock-val').innerText = lowStockProducts.length;
+
+        const lowStockTbody = document.getElementById('low-stock-table');
+        lowStockTbody.innerHTML = lowStockProducts.map(p => {
+          let colorDisplay = '-';
+          if (p.colorStocks && Object.keys(p.colorStocks).length > 0) {
+            colorDisplay = Object.entries(p.colorStocks)
+              .filter(([cName, qty]) => qty > 0)
+              .map(([cName, qty]) => `${cName} (${qty})`).join(', ');
+          } else if (p.colorName) {
+            colorDisplay = `<span class="color-badge" style="background:${p.colorHex || '#ccc'}"></span> ${p.colorName}`;
+          }
+          return `
+            <tr>
+              <td>${p.code}</td>
+              <td>${p.name}</td>
+              <td>${colorDisplay}</td>
+              <td style="color:var(--danger); font-weight:bold;">${p.stock}</td>
+            </tr>
+          `;
+        }).join('') || '<tr><td colspan="4" style="text-align:center;">لا توجد منتجات ناقصة 🎉</td></tr>';
+
+        const todayTbody = document.getElementById('today-transactions-table');
+        todayTbody.innerHTML = todayTxs.map(t => `
+          <tr>
+            <td>${t.time}</td>
+            <td><span class="status-badge ${t.type === 'SALE' ? 'status-done' : 'status-cancelled'}">${t.type === 'SALE' ? 'بيع 🛒' : 'إرجاع ↩️'}</span></td>
+            <td>${t.items.map(i => `${i.name} (${i.colorName || ''}) x${i.qty}`).join(', ')}</td>
+            <td><b>${t.total.toLocaleString()} IQD</b></td>
+            <td>${t.seller}</td>
+            <td>
+              ${t.type === 'SALE' ? `<button class="btn btn-red" style="padding:4px 10px; font-size:0.75rem;" onclick="app.refundTransaction('${t.id}')">إرجاع ↩️</button>` : '-'}
+            </td>
+          </tr>
+        `).join('') || '<tr><td colspan="6" style="text-align:center;">لا توجد عمليات لهذا اليوم بعد</td></tr>';
+      }
+
+      handleCashOut(e) {
+        e.preventDefault();
+        const worker = document.getElementById('cash-out-worker').value;
+        const amount = Number(document.getElementById('cash-out-amount').value);
+        const reason = document.getElementById('cash-out-reason').value;
+
+        const cashOutObj = {
+          id: Date.now().toString(),
+          date: this.currentDate,
+          time: new Date().toLocaleTimeString('ar-IQ'),
+          worker,
+          amount,
+          reason
+        };
+
+        this.cashOuts.push(cashOutObj);
+
+        this.workerInvoices.push({
+          id: cashOutObj.id,
+          worker,
+          type: 'سلفة',
+          amount,
+          date: this.currentDate,
+          notes: `سحب من الكاصة: ${reason}`
+        });
+
+        this.saveStorage();
+        this.renderHome();
+        this.renderWorkerInvoiceSheet();
+        document.getElementById('form-cash-out').reset();
+        alert('تم خصم المبلغ من الكاصة وتسجيله في حساب العامل بنجاح ✅');
+      }
+
+      renderPosProducts() {
+        const query = document.getElementById('pos-search-input').value.toLowerCase().trim();
+        const grid = document.getElementById('pos-product-grid');
+        
+        const filtered = this.products.filter(p => 
+          p.name.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          (p.colorName && p.colorName.toLowerCase().includes(query)) ||
+          p.sellPrice.toString().includes(query)
+        );
+
+        grid.innerHTML = filtered.map(p => {
+          let colorsText = p.colorName || '';
+          if (p.colorStocks && Object.keys(p.colorStocks).length > 0) {
+            const activeColors = Object.keys(p.colorStocks).filter(c => p.colorStocks[c] > 0);
+            if (activeColors.length > 0) {
+              colorsText = activeColors.join(', ');
+            }
+          }
+          return `
+            <div class="product-card" onclick="app.onPosProductClick('${p.id}')">
+              <img src="${p.image || 'https://placehold.co/150x100/18223B/F3E8C1?text=🧸+لعبة'}" class="product-img" alt="${p.name}">
+              <div style="font-weight:800; font-size:0.92rem; margin-bottom:4px; color:var(--text);">${p.name}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">كود: ${p.code} | <span class="color-badge" style="background:${p.colorHex || '#ccc'}"></span> ${colorsText}</div>
+              <div style="font-weight:800; color:#007AFF; font-size:1rem; margin-top:8px;">${p.sellPrice.toLocaleString()} IQD</div>
+              <div style="font-size:0.75rem; color:${p.stock > 0 ? '#10B981' : '#F43F5E'}; font-weight:bold; margin-top:2px;">المخزون: ${p.stock}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      onPosProductClick(productId) {
+        const prod = this.products.find(p => p.id === productId);
+        if (!prod) return;
+
+        if (prod.stock <= 0) {
+          alert('هذا المنتج غير متوفر بالمخزون حالياً!');
+          return;
+        }
+
+        const availableColorEntries = prod.colorStocks 
+          ? Object.entries(prod.colorStocks).filter(([cName, qty]) => qty > 0)
+          : [];
+
+        if (availableColorEntries.length > 1) {
+          this.selectedProductForColor = prod;
+          document.getElementById('color-modal-prod-name').innerText = prod.name;
+          const optionsDiv = document.getElementById('color-modal-options');
+          
+          optionsDiv.innerHTML = availableColorEntries.map(([cName, qty]) => {
+            const colorObj = this.availableColors.find(c => c.name === cName) || { hex: '#ccc' };
+            return `
+              <button class="btn" style="background: rgba(255,255,255,.7); color: var(--text); border: 1px solid var(--card-border); justify-content: space-between; padding: 12px 16px;" onclick="app.selectColorAndAddToCart('${cName}', '${colorObj.hex}')">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="color-badge" style="background:${colorObj.hex};"></span>
+                  <b>${cName}</b>
+                </div>
+                <span style="font-size:0.85rem; color:#007AFF;">المتوفر: ${qty}</span>
+              </button>
+            `;
+          }).join('');
+
+          document.getElementById('color-select-modal').style.display = 'flex';
+        } else if (availableColorEntries.length === 1) {
+          const [cName, qty] = availableColorEntries[0];
+          const colorObj = this.availableColors.find(c => c.name === cName) || { hex: prod.colorHex || '#ccc' };
+          this.addToCart(productId, cName, colorObj.hex);
+        } else {
+          this.addToCart(productId, prod.colorName || 'افتراضي', prod.colorHex || '#ccc');
+        }
+      }
+
+      closeColorModal() {
+        document.getElementById('color-select-modal').style.display = 'none';
+        this.selectedProductForColor = null;
+      }
+
+      selectColorAndAddToCart(colorName, colorHex) {
+        if (this.selectedProductForColor) {
+          this.addToCart(this.selectedProductForColor.id, colorName, colorHex);
+          this.closeColorModal();
+        }
+      }
+
+      addToCart(productId, chosenColorName = '', chosenColorHex = '#ccc') {
+        const prod = this.products.find(p => p.id === productId);
+        if (!prod) return;
+
+        const colorName = chosenColorName || prod.colorName || '';
+        const colorHex = chosenColorHex || prod.colorHex || '#ccc';
+        
+        let maxAvailableStock = prod.stock;
+        if (prod.colorStocks && prod.colorStocks[colorName] !== undefined) {
+          maxAvailableStock = prod.colorStocks[colorName];
+        }
+
+        if (maxAvailableStock <= 0) {
+          alert('هذا اللون غير متوفر بالمخزون حالياً!');
+          return;
+        }
+
+        const existing = this.cart.find(item => item.id === productId && item.colorName === colorName);
+        if (existing) {
+          if (existing.qty + 1 > maxAvailableStock) {
+            alert('الكمية المطلوبة تتجاوز المخزون المتوفر لهذا اللون!');
+            return;
+          }
+          existing.qty += 1;
+        } else {
+          this.cart.push({
+            id: prod.id,
+            code: prod.code,
+            name: prod.name,
+            colorName: colorName,
+            colorHex: colorHex,
+            price: prod.sellPrice,
+            qty: 1,
+            maxStock: maxAvailableStock
+          });
+        }
+        this.renderCart();
+      }
+
+      renderCart() {
+        const list = document.getElementById('cart-items-list');
+        let total = 0;
+
+        list.innerHTML = this.cart.map((item, index) => {
+          const itemTotal = item.price * item.qty;
+          total += itemTotal;
+          return `
+            <div class="cart-item">
+              <div>
+                <div style="font-weight:700; color:var(--text);">${item.name}</div>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+                  <span class="color-badge" style="background:${item.colorHex}"></span> ${item.colorName || 'لون افتراضي'}
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="number" class="cart-price-input" value="${item.price}" min="0" onchange="app.updateCartPrice(${index}, this.value)">
+                <span>x</span>
+                <input type="number" style="width:45px; padding:4px; text-align:center; background:rgba(255,255,255,0.6); border-radius:8px;" value="${item.qty}" min="1" max="${item.maxStock}" onchange="app.updateCartQty(${index}, this.value)">
+                <button class="btn btn-red" style="padding:4px 8px; font-size:0.75rem;" onclick="app.removeFromCart(${index})">✕</button>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div style="text-align:center; color:var(--text-muted); margin-top:60px;">السلة فارغة 🛒</div>';
+
+        document.getElementById('cart-total-amount').innerText = `${total.toLocaleString()} IQD`;
+      }
+
+      updateCartPrice(index, val) {
+        this.cart[index].price = Number(val) || 0;
+        this.renderCart();
+      }
+
+      updateCartQty(index, val) {
+        const qty = Number(val) || 1;
+        if (qty > this.cart[index].maxStock) {
+          alert('الكمية تتجاوز المخزون المتوفر!');
+          this.cart[index].qty = this.cart[index].maxStock;
+        } else {
+          this.cart[index].qty = qty;
+        }
+        this.renderCart();
+      }
+
+      removeFromCart(index) {
+        this.cart.splice(index, 1);
+        this.renderCart();
+      }
+
+      checkoutCart() {
+        if (this.cart.length === 0) {
+          alert('السلة فارغة!');
+          return;
+        }
+
+        const total = this.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const now = new Date();
+
+        const transaction = {
+          id: Date.now().toString(),
+          type: 'SALE',
+          date: this.currentDate,
+          time: now.toLocaleTimeString('ar-IQ'),
+          dateTimeFull: now.toLocaleString('ar-IQ'),
+          seller: this.currentUser || 'غير معروف',
+          items: [...this.cart],
+          total
+        };
+
+        this.cart.forEach(item => {
+          const prod = this.products.find(p => p.id === item.id);
+          if (prod) {
+            prod.stock -= item.qty;
+            if (prod.colorStocks && prod.colorStocks[item.colorName] !== undefined) {
+              prod.colorStocks[item.colorName] -= item.qty;
+            }
+          }
+        });
+
+        this.transactions.push(transaction);
+        this.saveStorage();
+
+        this.printReceipt(transaction);
+
+        this.cart = [];
+        this.renderAll();
+        alert('تمت عملية البيع بنجاح وتم تحضير الوصل للطباعة! 🎉');
+      }
+
+      printReceipt(tx) {
+        document.getElementById('rec-datetime').innerText = tx.dateTimeFull || `${tx.date} ${tx.time}`;
+        document.getElementById('rec-seller').innerText = tx.seller;
+        
+        const itemsContainer = document.getElementById('rec-items');
+        itemsContainer.innerHTML = tx.items.map(item => `
+          <tr>
+            <td><b>${item.name}</b></td>
+            <td>${item.code} - ${item.colorName || '-'}</td>
+            <td>${item.qty}</td>
+            <td>${item.price.toLocaleString()}</td>
+            <td><b>${(item.price * item.qty).toLocaleString()}</b></td>
+          </tr>
+        `).join('');
+
+        document.getElementById('rec-total').innerText = tx.total.toLocaleString();
+        window.print();
+      }
+
+      refundTransaction(txId) {
+        const tx = this.transactions.find(t => t.id === txId);
+        if (!tx || tx.type === 'REFUND') return;
+
+        if (confirm('هل أنت تأكد من إرجاع هذه العملية بالكامل وإعادة المنتجات إلى المخزون؟')) {
+          tx.items.forEach(item => {
+            const prod = this.products.find(p => p.id === item.id);
+            if (prod) {
+              prod.stock += item.qty;
+              if (prod.colorStocks && prod.colorStocks[item.colorName] !== undefined) {
+                prod.colorStocks[item.colorName] += item.qty;
+              }
+            }
+          });
+
+          this.transactions.push({
+            id: Date.now().toString(),
+            type: 'REFUND',
+            date: this.currentDate,
+            time: new Date().toLocaleTimeString('ar-IQ'),
+            seller: this.currentUser,
+            items: tx.items,
+            total: tx.total
+          });
+
+          this.saveStorage();
+          this.renderAll();
+          alert('تم إرجاع العملية وإعادة الكميات للمخزون بنجاح ↩️');
+        }
+      }
+
+      handleImageUpload(e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (!file.type || !file.type.startsWith('image/')) {
+          alert('Lütfen resim dosyası seçin.');
+          e.target.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => alert('Fotoğraf okunamadı. Başka bir resim deneyin.');
+        reader.onload = () => {
+          const img = new Image();
+          img.onerror = () => alert('Fotoğraf açılamadı. Başka bir resim deneyin.');
+          img.onload = () => {
+            // Compress product photos before putting them in localStorage.
+            const maxSide = 900;
+            const ratio = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(img.naturalWidth * ratio));
+            canvas.height = Math.max(1, Math.round(img.naturalHeight * ratio));
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              alert('Fotoğraf işlenemedi. Lütfen tekrar deneyin.');
+              return;
+            }
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.72);
+            document.getElementById('prod-image-base64').value = compressed;
+            const kb = Math.round((compressed.length * 3 / 4) / 1024);
+            if (kb > 450) alert('Fotoğraf sıkıştırıldı. Dosya hâlâ büyük; daha küçük bir fotoğraf seçmeniz kaydetmeyi kolaylaştırır.');
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      saveProduct(e) {
+        e.preventDefault();
+        const id = document.getElementById('prod-id').value || Date.now().toString();
+        const code = document.getElementById('prod-code').value.trim() || `TOY-${Math.floor(100 + Math.random() * 900)}`;
+        const name = document.getElementById('prod-name').value;
+        const category = document.getElementById('prod-category').value;
+        const buyPrice = Number(document.getElementById('prod-buy-price').value);
+        const sellPrice = Number(document.getElementById('prod-sell-price').value);
+        const image = document.getElementById('prod-image-base64').value;
+
+        const colorInputs = document.querySelectorAll('.color-qty-input');
+        const colorStocks = {};
+        let totalStock = 0;
+        let mainColor = '';
+        let mainHex = '#ccc';
+
+        colorInputs.forEach(inp => {
+          const qty = Number(inp.value) || 0;
+          if (qty > 0) {
+            const cName = inp.dataset.color;
+            const cHex = inp.dataset.hex;
+            colorStocks[cName] = qty;
+            totalStock += qty;
+            if (!mainColor) {
+              mainColor = cName;
+              mainHex = cHex;
+            }
+          }
+        });
+
+        const productData = {
+          id,
+          code,
+          name,
+          category,
+          buyPrice,
+          sellPrice,
+          colorHex: mainHex,
+          colorName: mainColor,
+          colorStocks,
+          stock: totalStock,
+          image
+        };
+
+        const existingIndex = this.products.findIndex(p => p.id === id);
+        if (existingIndex > -1) {
+          this.products[existingIndex] = productData;
+        } else {
+          this.products.push(productData);
+        }
+
+        const saved = this.saveStorage();
+        if (!saved) return;
+        this.resetProductForm();
+        this.renderAll();
+        alert('تم حفظ اللعبة بنجاح! 💾');
+      }
+
+      resetProductForm() {
+        document.getElementById('form-product').reset();
+        document.getElementById('prod-id').value = '';
+        document.getElementById('prod-image-base64').value = '';
+        this.renderColorStockInputs();
+      }
+
+      editProduct(id) {
+        const p = this.products.find(prod => prod.id === id);
+        if (!p) return;
+
+        document.getElementById('prod-id').value = p.id;
+        document.getElementById('prod-code').value = p.code;
+        document.getElementById('prod-name').value = p.name;
+        document.getElementById('prod-category').value = p.category;
+        document.getElementById('prod-buy-price').value = p.buyPrice;
+        document.getElementById('prod-sell-price').value = p.sellPrice;
+        document.getElementById('prod-image-base64').value = p.image || '';
+        
+        this.renderColorStockInputs(p.colorStocks || {});
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      deleteProduct(id) {
+        if (confirm('هل تأكد من حذف هذه اللعبة نهائياً من السيستم؟')) {
+          this.products = this.products.filter(p => p.id !== id);
+          this.saveStorage();
+          this.renderAll();
+        }
+      }
+
+      renderProductList() {
+        const tbody = document.getElementById('product-list-table');
+        tbody.innerHTML = this.products.map(p => {
+          let colorsDisplay = '-';
+          if (p.colorStocks && Object.keys(p.colorStocks).length > 0) {
+            colorsDisplay = Object.entries(p.colorStocks)
+              .filter(([cName, qty]) => qty > 0)
+              .map(([cName, qty]) => `${cName} (${qty})`).join(', ');
+          } else if (p.colorName) {
+            colorsDisplay = `<span class="color-badge" style="background:${p.colorHex}"></span> ${p.colorName}`;
+          }
+          return `
+            <tr>
+              <td><img src="${p.image || 'https://placehold.co/50x50/18223B/F3E8C1?text=🧸'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;" alt=""></td>
+              <td><b>${p.code}</b></td>
+              <td>${p.name}</td>
+              <td>${p.category}</td>
+              <td>${colorsDisplay}</td>
+              <td>${p.buyPrice.toLocaleString()} IQD</td>
+              <td>${p.sellPrice.toLocaleString()} IQD</td>
+              <td style="font-weight:bold; color:${p.stock > 0 ? '#10B981' : '#F43F5E'}">${p.stock}</td>
+              <td>
+                <button class="btn" style="padding:4px 10px; font-size:0.75rem;" onclick="app.editProduct('${p.id}')">تعديل ✏️</button>
+                <button class="btn btn-red" style="padding:4px 10px; font-size:0.75rem;" onclick="app.deleteProduct('${p.id}')">حذف 🗑️</button>
+              </td>
+            </tr>
+          `;
+        }).join('') || '<tr><td colspan="9" style="text-align:center;">لا توجد ألعاب مضافة</td></tr>';
+      }
+
+      renderRestockDropdown() {
+        const select = document.getElementById('restock-product-id');
+        if (!select) return;
+        select.innerHTML = this.products.map(p => `<option value="${p.id}">${p.code} - ${p.name} (المخزون الحالي: ${p.stock})</option>`).join('');
+        this.onRestockSelectProduct();
+      }
+
+      onRestockSelectProduct() {
+        const id = document.getElementById('restock-product-id').value;
+        const p = this.products.find(prod => prod.id === id);
+        const container = document.getElementById('restock-color-stock-inputs');
+        
+        if (p && container) {
+          document.getElementById('restock-new-price').value = p.sellPrice;
+          const currentColorStocks = p.colorStocks || {};
+          
+          container.innerHTML = this.availableColors.map(c => {
+            const currentQty = currentColorStocks[c.name] || 0;
+            return `
+              <div style="display:flex; flex-direction:column; background:rgba(255,255,255,0.6); padding:8px; border-radius:8px; border:1px solid rgba(60,60,67,0.14);">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                  <span class="color-badge" style="background:${c.hex};"></span>
+                  <span style="font-size:0.82rem; font-weight:700; flex:1; color:var(--text);">${c.name}</span>
+                </div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">الموجود: ${currentQty}</div>
+                <input type="number" class="restock-color-qty-input" data-color="${c.name}" data-hex="${c.hex}" min="0" value="0" placeholder="+0" style="width:100%; padding:3px; font-size:0.85rem; text-align:center; margin-top:4px; background:rgba(255,255,255,0.6);" onchange="app.calcTotalRestockQty()">
+              </div>
+            `;
+          }).join('');
+
+          this.calcTotalRestockQty();
+        }
+      }
+
+      calcTotalRestockQty() {
+        const inputs = document.querySelectorAll('.restock-color-qty-input');
+        let total = 0;
+        inputs.forEach(inp => {
+          total += Number(inp.value) || 0;
+        });
+        const qtyInput = document.getElementById('restock-qty');
+        if (qtyInput) qtyInput.value = total;
+      }
+
+      handleRestock(e) {
+        e.preventDefault();
+        const id = document.getElementById('restock-product-id').value;
+        const newPrice = Number(document.getElementById('restock-new-price').value);
+
+        const prod = this.products.find(p => p.id === id);
+        if (prod) {
+          if (!prod.colorStocks) prod.colorStocks = {};
+
+          const colorInputs = document.querySelectorAll('.restock-color-qty-input');
+          let addedTotal = 0;
+
+          colorInputs.forEach(inp => {
+            const qtyToAdd = Number(inp.value) || 0;
+            if (qtyToAdd > 0) {
+              const cName = inp.dataset.color;
+              prod.colorStocks[cName] = (prod.colorStocks[cName] || 0) + qtyToAdd;
+              addedTotal += qtyToAdd;
+
+              if (!prod.colorName) {
+                prod.colorName = cName;
+                prod.colorHex = inp.dataset.hex;
+              }
+            }
+          });
+
+          if (addedTotal === 0) {
+            alert('يرجى تحديد الكمية المضافة للون واحد على الأقل!');
+            return;
+          }
+
+          prod.stock += addedTotal;
+          if (newPrice) prod.sellPrice = newPrice;
+
+          this.saveStorage();
+          this.renderAll();
+          alert('تم إضافة الكمية وتحديث مخزون الألوان بنجاح! 📦');
+        }
+      }
+
+      renderSearchPage() {
+        const query = document.getElementById('search-page-input').value.toLowerCase().trim();
+        const tbody = document.getElementById('search-results-table');
+
+        const filtered = this.products.filter(p => 
+          p.name.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          (p.colorName && p.colorName.toLowerCase().includes(query)) ||
+          p.sellPrice.toString().includes(query)
+        );
+
+        tbody.innerHTML = filtered.map(p => {
+          let colorsDisplay = '-';
+          if (p.colorStocks && Object.keys(p.colorStocks).length > 0) {
+            colorsDisplay = Object.entries(p.colorStocks)
+              .filter(([cName, qty]) => qty > 0)
+              .map(([cName, qty]) => `${cName} (${qty})`).join(', ');
+          } else if (p.colorName) {
+            colorsDisplay = `<span class="color-badge" style="background:${p.colorHex}"></span> ${p.colorName}`;
+          }
+          return `
+            <tr>
+              <td><img src="${p.image || 'https://placehold.co/50x50/18223B/F3E8C1?text=🧸'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;" alt=""></td>
+              <td><b>${p.code}</b></td>
+              <td>${p.name}</td>
+              <td>${p.category}</td>
+              <td>${colorsDisplay}</td>
+              <td><b>${p.sellPrice.toLocaleString()} IQD</b></td>
+              <td style="font-weight:bold; color:${p.stock > 0 ? '#10B981' : '#F43F5E'}">${p.stock}</td>
+            </tr>
+          `;
+        }).join('') || '<tr><td colspan="7" style="text-align:center;">لا توجد ألعاب تطابق بحثك</td></tr>';
+      }
+
+      saveOrder(e) {
+        e.preventDefault();
+        const order = {
+          id: Date.now().toString(), customer: document.getElementById('order-customer').value.trim(),
+          phone: document.getElementById('order-phone').value.trim(), location: document.getElementById('order-location').value.trim(),
+          date: document.getElementById('order-date').value, deliveryDate: document.getElementById('order-delivery-date').value,
+          total: Number(document.getElementById('order-total').value) || 0, details: document.getElementById('order-details').value.trim(), status: 'pending'
+        };
+        this.orders.unshift(order); this.saveStorage(); this.renderOrders(); e.target.reset();
+        document.getElementById('order-date').value = this.currentDate;
+        alert('تم حفظ الطلب بنجاح. شكراً لثقتكم بنا 🌷');
+      }
+
+      renderOrders() {
+        const tbody = document.getElementById('orders-list-table'); if (!tbody) return;
+        const langs = '<option value="ar">العربية</option><option value="ku">کوردی</option><option value="tr">Türkçe</option>';
+        tbody.innerHTML = this.orders.map(o => `<tr>
+          <td><b>${this.escapeHTML(o.customer)}</b><br><small>${this.escapeHTML(o.phone)}</small></td>
+          <td>${this.escapeHTML(o.location)}</td><td>${o.date || '-'}</td><td>${o.deliveryDate || '-'}</td>
+          <td><b>${Number(o.total||0).toLocaleString()} IQD</b></td><td>${this.escapeHTML(o.details||'-')}</td>
+          <td><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><select id="order-lang-${o.id}" style="min-width:105px">${langs}</select><button class="btn" type="button" style="background:#20A85A;color:#fff" onclick="app.sendWhatsApp('order','${o.id}')">WhatsApp</button></div></td>
+          <td><select onchange="app.updateOrderStatus('${o.id}',this.value)"><option value="pending" ${o.status==='pending'?'selected':''}>قيد التجهيز</option><option value="ready" ${o.status==='ready'?'selected':''}>جاهز للتوصيل</option><option value="delivered" ${o.status==='delivered'?'selected':''}>تم التوصيل</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>ملغي</option></select></td>
+          <td><button class="btn btn-red" onclick="app.deleteOrder('${o.id}')">حذف</button></td></tr>`).join('') || '<tr><td colspan="9" style="text-align:center">لا توجد طلبات مسجلة بعد</td></tr>';
+      }
+
+      updateOrderStatus(id, status) { const o=this.orders.find(x=>x.id===id); if(o){o.status=status;this.saveStorage();this.renderOrders();} }
+      deleteOrder(id) { if(confirm('هل تريد حذف هذا الطلب؟')){this.orders=this.orders.filter(x=>x.id!==id);this.saveStorage();this.renderOrders();} }
+      escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+      sendWhatsApp(type, id) {
+        const isOrder = type === 'order';
+        const item = (isOrder ? this.orders : this.repairs).find(x=>x.id===id); if(!item) return;
+        const langEl = document.getElementById((isOrder?'order-lang-':'repair-lang-')+id);
+        const lang = langEl ? langEl.value : 'ar';
+        let phone = String(item.phone||'').replace(/[^0-9]/g,'');
+        if(phone.startsWith('00')) phone = phone.slice(2);
+        if(phone.startsWith('0')) phone = '964' + phone.slice(1);
+        else if(phone.startsWith('7')) phone = '964' + phone;
+        if(!phone){alert('يرجى إدخال رقم هاتف صحيح للزبون.');return;}
+        let message='';
+        if(isOrder){
+          const data={
+            ar:`مرحباً ${item.customer} 🌷\nنشكركم على طلبكم وثقتكم بنا.\n📍 الموقع: ${item.location}\n📅 تاريخ الطلب: ${item.date}\n🚚 موعد التوصيل: ${item.deliveryDate}\n💰 المبلغ الإجمالي: ${Number(item.total||0).toLocaleString()} دينار عراقي${item.details?'\n📝 التفاصيل: '+item.details:''}\nيسعدنا خدمتكم، ونتمنى لكم يوماً سعيداً.`,
+            ku:`بەڕێز ${item.customer}، سڵاو و ڕێز 🌷\nسوپاس بۆ داواکاری و متمانەتان.\n📍 شوێن: ${item.location}\n📅 بەرواری داواکاری: ${item.date}\n🚚 ڕۆژی گەیاندن: ${item.deliveryDate}\n💰 کۆی گشتی: ${Number(item.total||0).toLocaleString()} دیناری عێراقی${item.details?'\n📝 وردەکاری: '+item.details:''}\nخۆشحاڵین بە خزمەتکردنتان. ڕۆژێکی خۆشتان بۆ دەخوازین.`,
+            tr:`Merhaba ${item.customer} 🌷\nSiparişiniz ve güveniniz için teşekkür ederiz.\n📍 Konum: ${item.location}\n📅 Sipariş tarihi: ${item.date}\n🚚 Teslimat günü: ${item.deliveryDate}\n💰 Toplam tutar: ${Number(item.total||0).toLocaleString()} Irak dinarı${item.details?'\n📝 Detaylar: '+item.details:''}\nSize hizmet vermekten mutluluk duyarız. Güzel bir gün dileriz.`
+          }; message=data[lang];
+        } else {
+          const data={
+            ar:`مرحباً ${item.customer} 🌷\nنشكركم على ثقتكم بنا. تم تسجيل جهازكم للصيانة.\n🧸 الجهاز: ${item.device}\n🔧 المشكلة: ${item.issue}\n${item.location?'📍 الموقع: '+item.location+'\n':''}📅 تاريخ الاستلام: ${item.date}\n${item.deliveryDate?'🚚 موعد التسليم المتوقع: '+item.deliveryDate+'\n':''}💰 أجرة الصيانة: ${Number(item.price||0).toLocaleString()} دينار عراقي\nسنحرص على خدمتك بأفضل شكل، وسنبلغكم عند جاهزية الجهاز. مع خالص التقدير.`,
+            ku:`بەڕێز ${item.customer}، سڵاو 🌷\nسوپاس بۆ متمانەتان. ئامێرەکەتان بۆ چاککردنەوە تۆمار کرا.\n🧸 ئامێر: ${item.device}\n🔧 کێشە: ${item.issue}\n${item.location?'📍 شوێن: '+item.location+'\n':''}📅 بەرواری وەرگرتن: ${item.date}\n${item.deliveryDate?'🚚 ڕۆژی پێشبینیکراوی گەڕاندنەوە: '+item.deliveryDate+'\n':''}💰 کرێی چاککردنەوە: ${Number(item.price||0).toLocaleString()} دیناری عێراقی\nبە باشترین شێوە خزمەتتان دەکەین و کاتێک ئامادە بوو ئاگادارتان دەکەینەوە. بە ڕێزەوە.`,
+            tr:`Merhaba ${item.customer} 🌷\nBize duyduğunuz güven için teşekkür ederiz. Cihazınız tamir kaydına alınmıştır.\n🧸 Cihaz: ${item.device}\n🔧 Sorun: ${item.issue}\n${item.location?'📍 Konum: '+item.location+'\n':''}📅 Teslim alma tarihi: ${item.date}\n${item.deliveryDate?'🚚 Tahmini teslim günü: '+item.deliveryDate+'\n':''}💰 Tamir ücreti: ${Number(item.price||0).toLocaleString()} Irak dinarı\nSize en iyi şekilde yardımcı olacağız. Cihazınız hazır olduğunda sizi bilgilendireceğiz. Saygılarımızla.`
+          }; message=data[lang];
+        }
+        window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener');
+      }
+
+      saveRepair(e) {
+        e.preventDefault();
+        const customer = document.getElementById('repair-customer').value;
+        const phone = document.getElementById('repair-phone').value;
+        const device = document.getElementById('repair-device').value;
+        const location = document.getElementById('repair-location').value;
+        const deliveryDate = document.getElementById('repair-delivery-date').value;
+        const issue = document.getElementById('repair-issue').value;
+        const technician = document.getElementById('repair-technician').value;
+        const partsCost = Number(document.getElementById('repair-parts-cost').value) || 0;
+        const price = Number(document.getElementById('repair-price').value) || 0;
+        const notes = document.getElementById('repair-notes').value;
+
+        this.repairs.push({
+          id: Date.now().toString(),
+          date: this.currentDate,
+          customer,
+          phone,
+          location, deliveryDate,
+          device,
+          issue,
+          technician,
+          partsCost,
+          price,
+          notes,
+          status: 'pending'
+        });
+
+        this.saveStorage();
+        this.renderRepairs();
+        e.target.reset();
+        alert('تم تسجيل جهاز الصيانة والصلح بنجاح 🛠️');
+      }
+
+      updateRepairStatus(id, newStatus) {
+        const r = this.repairs.find(item => item.id === id);
+        if (r) {
+          r.status = newStatus;
+          this.saveStorage();
+          this.renderRepairs();
+        }
+      }
+
+      deleteRepair(id) {
+        if (confirm('هل أنت تأكد من حذف سجل الصيانة هذا نهائياً؟')) {
+          this.repairs = this.repairs.filter(r => r.id !== id);
+          this.saveStorage();
+          this.renderRepairs();
+          alert('تم حذف سجل الصيانة بنجاح 🗑️');
+        }
+      }
+
+      renderRepairs() {
+        const filter = document.getElementById('repair-filter-status').value;
+        const query = document.getElementById('repair-search-input').value.toLowerCase().trim();
+        const tbody = document.getElementById('repair-list-table');
+
+        let pendingCount = 0;
+        let doneCount = 0;
+        let todayRevenue = 0;
+
+        const filtered = this.repairs.filter(r => {
+          if (r.status === 'pending' || r.status === 'in_progress') pendingCount++;
+          if (r.status === 'done') doneCount++;
+          if (r.date === this.currentDate && r.status === 'delivered') {
+            todayRevenue += (r.price - r.partsCost);
+          }
+
+          const matchesStatus = filter === 'all' || r.status === filter;
+          const matchesQuery = r.customer.toLowerCase().includes(query) ||
+                               r.device.toLowerCase().includes(query) ||
+                               r.issue.toLowerCase().includes(query) ||
+                               r.phone.includes(query);
+          return matchesStatus && matchesQuery;
+        });
+
+        document.getElementById('repair-pending-count').innerText = pendingCount;
+        document.getElementById('repair-done-count').innerText = doneCount;
+        document.getElementById('repair-today-revenue').innerText = `${todayRevenue.toLocaleString()} IQD`;
+
+        const statusBadges = {
+          pending: '<span class="status-badge status-pending">قيد الانتظار (Bekliyor)</span>',
+          in_progress: '<span class="status-badge status-progress">جاري الإصلاح (Tamir Ediliyor)</span>',
+          done: '<span class="status-badge status-done">جاهز للتسليم (Hazır)</span>',
+          delivered: '<span class="status-badge status-delivered">تم التسليم (Teslim Edildi)</span>',
+          cancelled: '<span class="status-badge status-cancelled">ملغى (İptal)</span>'
+        };
+
+        tbody.innerHTML = filtered.map(r => `
+          <tr>
+            <td>${r.date}</td>
+            <td><b>${r.customer}</b><br><small style="color:var(--text-muted);">${r.phone}</small></td>
+            <td>${r.device}</td>
+            <td>${r.issue}</td>
+            <td>${r.technician}</td>
+            <td>${r.partsCost.toLocaleString()} IQD</td>
+            <td><b>${r.price.toLocaleString()} IQD</b></td>
+            <td style="color:#10B981; font-weight:bold;">${(r.price - r.partsCost).toLocaleString()} IQD</td>
+            <td>${statusBadges[r.status]}</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <select id="repair-lang-${r.id}" style="padding:4px 6px;font-size:.78rem;min-width:100px"><option value="ar">العربية</option><option value="ku">کوردی</option><option value="tr">Türkçe</option></select>
+                <button type="button" class="btn" style="background:#20A85A;color:#fff;padding:5px 8px;font-size:.75rem" onclick="app.sendWhatsApp('repair','${r.id}')">WhatsApp</button>
+                <select onchange="app.updateRepairStatus('${r.id}', this.value)" style="padding:4px 6px; font-size:0.8rem;">
+                  <option value="pending" ${r.status === 'pending' ? 'selected' : ''}>قيد الانتظار</option>
+                  <option value="in_progress" ${r.status === 'in_progress' ? 'selected' : ''}>جاري الإصلاح</option>
+                  <option value="done" ${r.status === 'done' ? 'selected' : ''}>جاهز للتسليم</option>
+                  <option value="delivered" ${r.status === 'delivered' ? 'selected' : ''}>تم التسليم</option>
+                  <option value="cancelled" ${r.status === 'cancelled' ? 'selected' : ''}>ملغى</option>
+                </select>
+                <button type="button" class="btn btn-red" style="padding:4px 8px; font-size:0.75rem;" onclick="app.deleteRepair('${r.id}')">حذف 🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('') || '<tr><td colspan="10" style="text-align:center;">لا توجد سجلات صيانة</td></tr>';
+      }
+
+      switchInvoiceTab(tabName, event) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+        event.currentTarget.classList.add('active');
+        document.getElementById(`tab-${tabName}`).style.display = 'block';
+      }
+
+      addStoreInvoice(e) {
+        e.preventDefault();
+        const title = document.getElementById('inv-title').value;
+        const amount = Number(document.getElementById('inv-amount').value);
+        const date = document.getElementById('inv-date').value;
+        const status = document.getElementById('inv-status').value;
+
+        this.storeInvoices.push({
+          id: Date.now().toString(),
+          title,
+          amount,
+          date,
+          status
+        });
+
+        this.saveStorage();
+        this.renderStoreInvoices();
+        e.target.reset();
+        alert('تمت إضافة فاتورة المحل بنجاح 📄');
+      }
+
+      toggleInvoiceStatus(id) {
+        const inv = this.storeInvoices.find(i => i.id === id);
+        if (inv) {
+          inv.status = inv.status === 'paid' ? 'unpaid' : 'paid';
+          this.saveStorage();
+          this.renderStoreInvoices();
+        }
+      }
+
+      renderStoreInvoices() {
+        const tbody = document.getElementById('store-invoices-table');
+        tbody.innerHTML = this.storeInvoices.map(inv => `
+          <tr>
+            <td>${inv.date}</td>
+            <td><b>${inv.title}</b></td>
+            <td>${inv.amount.toLocaleString()} IQD</td>
+            <td>
+              <span class="status-badge ${inv.status === 'paid' ? 'status-done' : 'status-cancelled'}">
+                ${inv.status === 'paid' ? 'مدفوعة ✅' : 'غير مدفوعة ❌'}
+              </span>
+            </td>
+            <td>
+              <button class="btn" style="padding:4px 10px; font-size:0.75rem;" onclick="app.toggleInvoiceStatus('${inv.id}')">تغيير الحالة 🔄</button>
+            </td>
+          </tr>
+        `).join('') || '<tr><td colspan="5" style="text-align:center;">لا توجد فواتير محل بعد</td></tr>';
+      }
+
+      addWorkerInvoice(e) {
+        e.preventDefault();
+        const worker = document.getElementById('worker-inv-user-select').value;
+        const type = document.getElementById('worker-inv-type').value;
+        const amount = Number(document.getElementById('worker-inv-amount').value);
+        const date = document.getElementById('worker-inv-date').value;
+        const notes = document.getElementById('worker-inv-notes').value;
+
+        this.workerInvoices.push({
+          id: Date.now().toString(),
+          worker,
+          type,
+          amount,
+          date,
+          notes
+        });
+
+        this.saveStorage();
+        this.renderWorkerInvoiceSheet();
+        e.target.reset();
+        alert('تم تسجيل فاتورة وسحوبات العامل بنجاح 📄');
+      }
+
+      renderWorkerInvoiceSheet() {
+        const worker = document.getElementById('inv-worker-select').value;
+        const container = document.getElementById('worker-invoice-sheet');
+        if (!worker || !container) return;
+
+        const invoices = this.workerInvoices.filter(i => i.worker === worker);
+        const totalPaid = invoices.reduce((sum, i) => sum + i.amount, 0);
+
+        container.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3>📋 كشف حساب وسحوبات العامل: <span style="color:#007AFF;">${worker}</span></h3>
+            <div style="font-weight:bold; color:var(--danger); font-size:1.15rem;">إجمالي المسحوبات/المدفوعات: ${totalPaid.toLocaleString()} IQD</div>
+          </div>
+          <table style="width:100%;">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>نوع الدفع</th>
+                <th>البيان / الملاحظة</th>
+                <th>المبلغ (IQD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${invoices.map(i => `
+                <tr>
+                  <td>${i.date}</td>
+                  <td><b>${i.type}</b></td>
+                  <td>${i.notes}</td>
+                  <td><b>${i.amount.toLocaleString()} IQD</b></td>
+                </tr>
+              `).join('') || '<tr><td colspan="4" style="text-align:center;">لا توجد سحوبات مسبقة لهذا العامل</td></tr>'}
+            </tbody>
+          </table>
+        `;
+      }
+
+      addWorker(e) {
+        e.preventDefault();
+        const name = document.getElementById('worker-name').value.trim();
+        const commission = Number(document.getElementById('worker-commission').value) || 0;
+
+        if (name && !this.workers.find(w => w.name === name)) {
+          this.workers.push({
+            id: Date.now().toString(),
+            name,
+            commission
+          });
+
+          this.saveStorage();
+          this.populateUserDropdown();
+          this.renderWorkersList();
+          e.target.reset();
+          alert('تم إضافة العامل بنجاح! 👤');
+        }
+      }
+
+      renderWorkersList() {
+        const tbody = document.getElementById('workers-list-table');
+        tbody.innerHTML = this.workers.map(w => {
+          const workerSales = this.transactions
+            .filter(t => t.seller === w.name && t.date === this.currentDate && t.type === 'SALE')
+            .reduce((sum, t) => sum + t.total, 0);
+
+          const workerOuts = this.cashOuts
+            .filter(c => c.worker === w.name && c.date === this.currentDate)
+            .reduce((sum, c) => sum + c.amount, 0);
+
+          const safeName = w.name.replace(/'/g, "\\'");
+
+          return `
+            <tr>
+              <td><b>${w.name}</b></td>
+              <td style="color:#10B981; font-weight:bold;">${workerSales.toLocaleString()} IQD</td>
+              <td style="color:var(--danger); font-weight:bold;">${workerOuts.toLocaleString()} IQD</td>
+              <td>
+                <button type="button" class="btn btn-red" style="padding:4px 10px; font-size:0.75rem;" onclick="app.deleteWorker('${w.id}', '${safeName}')">حذف 🗑️</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      deleteWorker(id, name) {
+        if (confirm(`هل أنت تأكد من حذف العامل (${name})؟`)) {
+          this.workers = this.workers.filter(w => w.id !== id);
+          this.saveStorage();
+          this.populateUserDropdown();
+          this.renderWorkersList();
+          alert('تم حذف العامل بنجاح 🗑️');
+        }
+      }
+
+      addDailyEarning(e) {
+        e.preventDefault();
+        const title = document.getElementById('earning-title').value;
+        const amount = Number(document.getElementById('earning-amount').value);
+        const notes = document.getElementById('earning-notes').value;
+
+        this.dailyEarnings.push({
+          id: Date.now().toString(),
+          date: this.currentDate,
+          title,
+          amount,
+          notes,
+          user: this.currentUser
+        });
+
+        this.saveStorage();
+        this.renderFinancials();
+        e.target.reset();
+        alert('تم تسجيل الكسب اليومي الإضافي بنجاح 💵');
+      }
+
+      renderFinancials() {
+        const todayTxs = this.transactions.filter(t => t.date === this.currentDate);
+        const todayOuts = this.cashOuts.filter(c => c.date === this.currentDate);
+        const todayInv = this.storeInvoices.filter(i => i.date === this.currentDate && i.status === 'paid');
+        const todayExtraGain = this.dailyEarnings.filter(g => g.date === this.currentDate).reduce((sum, g) => sum + g.amount, 0);
+
+        const salesTotal = todayTxs.reduce((sum, t) => sum + (t.type === 'SALE' ? t.total : -t.total), 0);
+        const expensesTotal = todayOuts.reduce((sum, c) => sum + c.amount, 0) + todayInv.reduce((sum, i) => sum + i.amount, 0);
+
+        let totalProfit = 0;
+        todayTxs.forEach(t => {
+          if (t.type === 'SALE') {
+            t.items.forEach(item => {
+              const prod = this.products.find(p => p.id === item.id);
+              const buy = prod ? prod.buyPrice : 0;
+              totalProfit += (item.price - buy) * item.qty;
+            });
+          }
+        });
+
+        const netGain = salesTotal + todayExtraGain - expensesTotal;
+
+        document.getElementById('fin-today-sales').innerText = `${salesTotal.toLocaleString()} IQD`;
+        document.getElementById('fin-today-expenses').innerText = `${expensesTotal.toLocaleString()} IQD`;
+        document.getElementById('fin-today-profit').innerText = `${totalProfit.toLocaleString()} IQD`;
+        document.getElementById('fin-today-net-gain').innerText = `${netGain.toLocaleString()} IQD`;
+
+        const tbody = document.getElementById('fin-sales-table');
+        const allEvents = [
+          ...todayTxs.map(t => ({
+            date: t.date,
+            time: t.time,
+            code: t.type === 'SALE' ? `مبيعات #${t.id.slice(-4)}` : `إرجاع #${t.id.slice(-4)}`,
+            details: t.items.map(i => `${i.name} (${i.colorName || ''}) x${i.qty}`).join(', '),
+            amount: t.total,
+            seller: t.seller
+          })),
+          ...this.dailyEarnings.filter(g => g.date === this.currentDate).map(g => ({
+            date: g.date,
+            time: 'إيراد إضافي',
+            code: `إيراد إضافي`,
+            details: `${g.title} (${g.notes || ''})`,
+            amount: g.amount,
+            seller: g.user || 'المدير'
+          }))
+        ];
+
+        tbody.innerHTML = allEvents.map(e => `
+          <tr>
+            <td>${e.date}</td>
+            <td>${e.time}</td>
+            <td><b>${e.code}</b></td>
+            <td>${e.details}</td>
+            <td style="color:#10B981; font-weight:bold;">${e.amount.toLocaleString()} IQD</td>
+            <td>${e.seller}</td>
+          </tr>
+        `).join('') || '<tr><td colspan="6" style="text-align:center;">لا توجد مبيعات أو أرباح مسجلة اليوم بعد</td></tr>';
+      }
+
+      resetFinancialsOnly() {
+        if (confirm('⚠️ هل أنت تأكد من تصفير فقط الأرقام والعمليات المالية؟\n\n(سيتم مسح سجلات البيع، المسحوبات، الفواتير، والأرباح فقط. المنتجات والمخزون والعمال لن تتأثر إطلاقاً)')) {
+          this.transactions = [];
+          this.cashOuts = [];
+          this.storeInvoices = [];
+          this.workerInvoices = [];
+          this.dailyEarnings = [];
+          this.saveStorage();
+          this.renderAll();
+          alert('تم تصفير الأرقام والعمليات المالية بنجاح 🔄');
+        }
+      }
+
+      clearAllSalesHistory() {
+        if (confirm('هل أنت تأكد من مسح كافة سجلات المبيعات؟')) {
+          this.transactions = [];
+          this.saveStorage();
+          this.renderAll();
+          alert('تم مسح كافة سجلات المبيعات 🗑️');
+        }
+      }
+
+      exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(localStorage));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `toy_store_backup_${this.currentDate}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+      }
+
+      importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            Object.keys(data).forEach(key => {
+              localStorage.setItem(key, data[key]);
+            });
+            alert('تم استيراد النسخة الاحتياطية بنجاح! 📥');
+            window.location.reload();
+          } catch (err) {
+            alert('ملف غير صالح!');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      resetAllData() {
+        if (confirm('⚠️ حذار! هل أنت متأكد من مسح جميع البيانات نهائياً؟')) {
+          localStorage.clear();
+          window.location.reload();
+        }
+      }
+    }
+
+    let app;
+    window.onload = () => {
+      app = new ToyStoreApp();
+    };
+  </script>
+
+  <div id="scan-modal" class="login-modal" style="display:none;">
+    <div class="login-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h2 id="scan-title" style="margin:0;font-size:1.3rem;"></h2>
+        <button type="button" class="btn-logout" onclick="scanner.close()">✕ إغلاق</button>
+      </div>
+      <div id="scan-qr-pane">
+        <div class="scan-view"><video id="scan-video" playsinline muted autoplay></video><div class="scan-frame"></div></div>
+        <div class="tools"><label class="btn btn-tool">📸 التقاط صورة للـ QR<input type="file" accept="image/*" capture="environment" hidden onchange="scanner.fromFile(this)"></label><label class="btn btn-tool">📁 من المعرض<input type="file" accept="image/*" hidden onchange="scanner.fromFile(this)"></label></div><div class="form-grid" style="grid-template-columns:1fr auto;align-items:end;margin-top:12px"><div class="form-group"><label for="scan-manual-code">إدخال الرمز يدوياً عند تعذر المسح</label><input id="scan-manual-code" type="text" placeholder="اكتب رمز المنتج ثم اضغط بحث"></div><button type="button" class="btn" onclick="scanner.manual()">بحث بالرمز</button></div>
+      </div>
+      <div id="scan-img-pane" style="display:none;">
+        <div class="tools">
+          <label class="btn btn-tool">📷 التقاط صورة<input type="file" accept="image/*" capture="environment" hidden onchange="scanner.imageSearch(this)"></label>
+          <label class="btn btn-tool">🖼️ اختيار من المعرض<input type="file" accept="image/*" hidden onchange="scanner.imageSearch(this)"></label>
+        </div>
+        <img id="img-preview" style="display:none;" alt="">
+        <div class="res-grid" id="img-results"></div>
+      </div>
+      <div id="scan-status">...</div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+  <script>
+  const scanner = {
+    mode: 'pos', stream: null, timer: 0, det: null, last: '', lastT: 0, cache: {},
+    $: id => document.getElementById(id),
+    status(t, c = '') { const e = this.$('scan-status'); e.textContent = t; e.className = c; },
+    manual() { const el = this.$('scan-manual-code'); const value = (el.value || '').trim(); if (!value) { this.status('اكتب رمز المنتج أولاً.', 'warn'); return; } this.last = ''; this.handle(value); },
+    open(kind, mode) {
+      this.mode = mode; this.$('scan-modal').style.display = 'flex'; this.$('img-results').innerHTML = ''; this.$('img-preview').style.display = 'none';
+      const qr = kind === 'qr';
+      this.$('scan-qr-pane').style.display = qr ? 'block' : 'none'; this.$('scan-img-pane').style.display = qr ? 'none' : 'block';
+      this.$('scan-title').textContent = qr ? '📷 مسح QR / باركود' : '🖼️ البحث بالصورة';
+      if (qr) this.startCamera(); else this.status('التقط صورة للعبة أو اخترها من المعرض وسنعرض أقرب المنتجات شبهاً.');
+    },
+    close() { clearTimeout(this.timer); if (this.stream) this.stream.getTracks().forEach(t => t.stop()); this.stream = null; this.$('scan-modal').style.display = 'none'; },
+    loadScript(url) {
+      return new Promise(resolve => {
+        const script = document.createElement('script');
+        script.src = url; script.async = true;
+        script.onload = () => resolve(true); script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      });
+    },
+    loadJsQR() {
+      if (window.jsQR) return Promise.resolve(true);
+      if (this._lp) return this._lp;
+      this._lp = (async () => {
+        const urls = [
+          'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js',
+          'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
+          'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'
+        ];
+        for (const url of urls) if (await this.loadScript(url) && window.jsQR) return true;
+        this._lp = null; return false;
+      })();
+      return this._lp;
+    },
+    loadZXing() {
+      if (window.ZXing && window.ZXing.BrowserMultiFormatReader) return Promise.resolve(true);
+      if (this._zlp) return this._zlp;
+      this._zlp = (async () => {
+        const urls = [
+          'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js',
+          'https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js'
+        ];
+        for (const url of urls) if (await this.loadScript(url) && window.ZXing && window.ZXing.BrowserMultiFormatReader) return true;
+        this._zlp = null; return false;
+      })();
+      return this._zlp;
+    },
+    async startCamera() {
+      this.status('جاري تشغيل الكاميرا...'); this.det = null; this.hinted = false; this.t0 = Date.now();
+      try { if ('BarcodeDetector' in window) { const supported = await BarcodeDetector.getSupportedFormats(); const wanted = ['qr_code','ean_13','ean_8','ean_upc','code_128','code_39','code_93','codabar','upc_a','upc_e','itf','data_matrix','pdf417','aztec']; this.det = new BarcodeDetector({ formats: wanted.filter(x => supported.includes(x)) }); } } catch (e) { this.det = null; }
+      Promise.all([this.loadJsQR(), this.loadZXing()]).then(([qrOk, zxOk]) => { if (!qrOk && !zxOk && !this.det && this.stream) this.status('لم يتم تحميل مكتبات قراءة QR. تحقق من اتصال الإنترنت. يمكنك أيضاً اختيار صورة QR من المعرض.', 'warn'); });
+      const md = navigator.mediaDevices;
+      if (!window.isSecureContext || !md || !md.getUserMedia) {
+        this.status('المتصفح يمنع تشغيل الكاميرا لأن الصفحة ليست على HTTPS. افتح تطبيق CasaOS عبر رابط HTTPS، أو اختر صورة QR من المعرض الآن.', 'warn');
+        return;
+      }
+      try {
+        try { this.stream = await md.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30, max: 30 } }, audio: false }); }
+        catch (e) { if (e.name === 'NotAllowedError' || e.name === 'SecurityError') throw e; this.stream = await md.getUserMedia({ video: true, audio: false }); }
+        const v = this.$('scan-video'); v.srcObject = this.stream; await v.play();
+        if (!this.det && !window.jsQR) this.status('الكاميرا تعمل لكن قارئ QR لم يُحمَّل بعد. تحقق من الإنترنت أو استخدم التقاط صورة/إدخال الرمز يدوياً.', 'warn');
+        else this.status('وجّه الكاميرا نحو رمز QR أو الباركود. ثبّت الهاتف واجعل الرمز داخل الإطار.');
+        this.tick();
+      } catch (e) {
+        const m = { NotAllowedError: 'تم رفض إذن الكاميرا. اسمح بالكاميرا من إعدادات المتصفح، وإذا فتحت الملف من داخل تطبيق (واتساب/تيليجرام) افتحه بمتصفح Chrome أو Safari.', NotFoundError: 'لا توجد كاميرا في هذا الجهاز.', NotReadableError: 'الكاميرا مستخدمة من تطبيق آخر. أغلقه ثم أعد المحاولة.' };
+        this.status((m[e.name] || ('تعذر تشغيل الكاميرا (' + e.name + ').')) + ' يمكنك استخدام "التقاط صورة للـ QR" بالأسفل.', 'warn');
+      }
+    },
+    async tick() {
+      const v = this.$('scan-video');
+      if (!this.stream || this.$('scan-modal').style.display === 'none') return;
+      if (v.readyState >= 2 && !this._decoding) {
+        this._decoding = true;
+        try {
+          const t = await this.decode(v, v.videoWidth, v.videoHeight);
+          if (t) this.handle(t);
+          else if (!this.hinted && Date.now() - this.t0 > 10000) {
+            this.hinted = true;
+            this.status('قرّب رمز QR ليملأ جزءاً أكبر من الصورة، وثبّت الهاتف مع إضاءة جيدة. ويمكنك اختيار صورة للرمز من المعرض.', 'warn');
+          }
+        } finally { this._decoding = false; }
+      }
+      if (this.stream && this.$('scan-modal').style.display !== 'none') this.timer = setTimeout(() => this.tick(), 220);
+    },
+    async decode(src, w, h) {
+      try {
+        if (this.det) {
+          const results = await this.det.detect(src);
+          const hit = results && results.find(x => x && x.rawValue);
+          if (hit) return String(hit.rawValue).trim();
+        }
+      } catch (e) {}
+      if (!w || !h) return '';
+      const scale = Math.min(1, 2400 / Math.max(w, h));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(w * scale));
+      canvas.height = Math.max(1, Math.round(h * scale));
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return '';
+      try { ctx.drawImage(src, 0, 0, canvas.width, canvas.height); } catch (e) { return ''; }
+      if (window.jsQR) {
+        const attempts = [];
+        try { attempts.push(ctx.getImageData(0, 0, canvas.width, canvas.height)); } catch (e) {}
+        if (attempts.length) {
+          const original = attempts[0];
+          for (const mode of ['gray', 'contrast']) {
+            const copy = document.createElement('canvas'); copy.width = canvas.width; copy.height = canvas.height;
+            const cx = copy.getContext('2d', { willReadFrequently: true });
+            const id = cx.createImageData(original.width, original.height);
+            for (let i = 0; i < original.data.length; i += 4) {
+              let y = Math.round(original.data[i] * .299 + original.data[i + 1] * .587 + original.data[i + 2] * .114);
+              if (mode === 'contrast') y = Math.max(0, Math.min(255, (y - 128) * 1.55 + 128));
+              id.data[i] = id.data[i + 1] = id.data[i + 2] = y; id.data[i + 3] = original.data[i + 3];
+            }
+            cx.putImageData(id, 0, 0);
+            try { attempts.push(cx.getImageData(0, 0, copy.width, copy.height)); } catch (e) {}
+          }
+          for (const pixels of attempts) {
+            try {
+              const result = window.jsQR(pixels.data, pixels.width, pixels.height, { inversionAttempts: 'attemptBoth' });
+              if (result && result.data) return String(result.data).trim();
+            } catch (e) {}
+          }
+        }
+      }
+      try {
+        if (window.ZXing && window.ZXing.BrowserMultiFormatReader) {
+          this._zxReader = this._zxReader || new window.ZXing.BrowserMultiFormatReader();
+          const result = this._zxReader.decodeFromCanvas(canvas);
+          if (result && result.getText) return String(result.getText()).trim();
+        }
+      } catch (e) {}
+      return '';
+    },
+    find(text) {
+      const raw = String(text == null ? '' : text).trim();
+      const P = app.products;
+      const candidates = [raw];
+      // QR codes may contain plain codes, JSON payloads, or product links.
+      try {
+        const j = JSON.parse(raw);
+        if (j && typeof j === 'object') {
+          ['code','id','sku','barcode','productCode','product_code','productId','product_id'].forEach(k => { if (j[k] != null) candidates.push(String(j[k]).trim()); });
+        }
+      } catch (e) {}
+      try {
+        const u = new URL(raw, window.location.href);
+        ['code','id','sku','barcode','product','productCode','product_id'].forEach(k => { const v = u.searchParams.get(k); if (v) candidates.push(v.trim()); });
+        const tail = u.pathname.split('/').filter(Boolean).pop(); if (tail) candidates.push(decodeURIComponent(tail));
+      } catch (e) {}
+      candidates.push(raw.replace(/^(?:QR|CODE|SKU|BARCODE)\s*[:#-]\s*/i, '').trim());
+      for (const candidate of candidates) {
+        const t = candidate.toLowerCase();
+        const exact = P.find(p => String(p.code || '').toLowerCase() === t || String(p.id).toLowerCase() === t);
+        if (exact) return exact;
+      }
+      const terms = candidates.map(x => x.toLowerCase()).filter(Boolean);
+      return P.filter(p => terms.some(t => t.includes(String(p.code || '').toLowerCase()) && String(p.code || '').length > 0))
+        .sort((a, b) => String(b.code || '').length - String(a.code || '').length)[0] || null;
+    },
+    beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(); o.frequency.value = 880; o.connect(a.destination); o.start(); setTimeout(() => { o.stop(); a.close(); }, 120); } catch (e) {} },
+    handle(text) {
+      const now = Date.now();
+      if (text === this.last && now - this.lastT < 2500) return;
+      this.last = text; this.lastT = now;
+      if (this.mode === 'add') {
+        this.beep(); this.close();
+        const f = this.find(text);
+        if (f) { app.editProduct(f.id); return; }
+        let c = String(text).trim();
+        try { const j = JSON.parse(c); if (j && j.code) c = String(j.code); } catch (e) {}
+        const ci = this.$('prod-code'); ci.value = c; ci.focus(); this.$('prod-name').focus();
+        return;
+      }
+      const p = this.find(text);
+      if (!p) { this.status('⚠️ لا يوجد منتج بهذا الرمز: ' + text, 'warn'); return; }
+      this.beep();
+      if (this.mode === 'pos') {
+        app.onPosProductClick(p.id);
+        if (this.$('color-select-modal').style.display === 'flex') this.close();
+        else this.status('✅ تمت إضافة: ' + p.name, 'ok');
+      } else this.pick(p.id);
+    },
+    pick(id) {
+      const p = app.products.find(x => x.id === id); if (!p) return;
+      this.close();
+      if (this.mode === 'pos') app.onPosProductClick(id);
+      else { const i = this.$('search-page-input'); i.value = p.code; app.renderSearchPage(); i.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    },
+    loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; }); },
+    async fromFile(inp) {
+      const f = inp.files[0]; inp.value = ''; if (!f) return;
+      this.status('جاري قراءة الصورة...'); const [libOk, zxOk] = await Promise.all([this.loadJsQR(), this.loadZXing()]);
+      if (!this.det && 'BarcodeDetector' in window) { try { const fm = await BarcodeDetector.getSupportedFormats(); const wanted = ['qr_code','ean_13','ean_8','ean_upc','code_128','code_39','code_93','codabar','upc_a','upc_e','itf','data_matrix','pdf417','aztec']; const formats = wanted.filter(x => fm.includes(x)); if (formats.length) this.det = new BarcodeDetector({formats}); } catch(e) {} }
+      const objectUrl = URL.createObjectURL(f); const img = await this.loadImg(objectUrl); URL.revokeObjectURL(objectUrl);
+      const t = img ? await this.decode(img, img.naturalWidth, img.naturalHeight) : '';
+      if (t) { this.last = ''; this.handle(t); } else this.status(window.jsQR || window.ZXing || this.det || libOk || zxOk ? 'لم يتم العثور على رمز مدعوم في الصورة. قرّب الرمز وتأكد من وضوحه وعدم انعكاس الضوء.' : 'لم يتم تحميل قارئ QR. اتصل بالإنترنت ثم أعد المحاولة، أو استخدم إدخال الرمز يدوياً.', 'warn');
+    },
+    feat(img) {
+      const draw = (w, h) => {
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d', { willReadFrequently: true }), s = Math.min(img.width, img.height);
+        x.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, w, h);
+        return x.getImageData(0, 0, w, h).data;
+      };
+      const d = draw(32, 32), hist = new Float32Array(64);
+      for (let i = 0; i < d.length; i += 4) hist[(d[i] >> 6) * 16 + (d[i + 1] >> 6) * 4 + (d[i + 2] >> 6)] += 1 / 1024;
+      const g = draw(9, 8), bits = [];
+      for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) { const a = (y * 9 + x) * 4, b = a + 4; bits.push(g[a] * .3 + g[a + 1] * .59 + g[a + 2] * .11 > g[b] * .3 + g[b + 1] * .59 + g[b + 2] * .11 ? 1 : 0); }
+      return { hist, bits };
+    },
+    sim(a, b) {
+      let hi = 0, ham = 0;
+      for (let i = 0; i < 64; i++) { hi += Math.min(a.hist[i], b.hist[i]); if (a.bits[i] !== b.bits[i]) ham++; }
+      return 0.6 * hi + 0.4 * (1 - ham / 64);
+    },
+    async imageSearch(inp) {
+      const f = inp.files[0]; inp.value = ''; if (!f) return;
+      const url = URL.createObjectURL(f), pv = this.$('img-preview'); pv.src = url; pv.style.display = 'block';
+      this.status('جاري تحليل الصورة...');
+      const qi = await this.loadImg(url); if (!qi) return this.status('تعذر قراءة الصورة.', 'warn');
+      const q = this.feat(qi), out = [];
+      for (const p of app.products) {
+        if (!p.image) continue;
+        const key = p.id + ':' + p.image.length;
+        if (!(key in this.cache)) { const im = await this.loadImg(p.image); try { this.cache[key] = im ? this.feat(im) : null; } catch (e) { this.cache[key] = null; } }
+        if (this.cache[key]) out.push({ p, s: this.sim(q, this.cache[key]) });
+      }
+      out.sort((a, b) => b.s - a.s);
+      const top = out.slice(0, 6);
+      this.$('img-results').innerHTML = top.map(r => `<div class="product-card" onclick="scanner.pick('${r.p.id}')"><span class="pct">${Math.round(r.s * 100)}%</span><img src="${r.p.image}" class="product-img" alt=""><div style="font-weight:700;font-size:.9rem;">${r.p.name}</div><div style="font-size:.78rem;color:var(--text-muted);">${r.p.code}</div><div style="font-weight:700;color:#007AFF;margin-top:4px;">${r.p.sellPrice.toLocaleString()} IQD</div></div>`).join('');
+      this.status(top.length ? 'أقرب المنتجات شبهاً بالصورة (اضغط على المنتج). النتيجة تعتمد على الألوان والشكل العام.' : 'لا توجد منتجات بصور محفوظة للمقارنة. أضف صور للمنتجات أولاً.', top.length ? 'ok' : 'warn');
+    }
+  };
+  </script>
+
+<script>
+/* Order product picker + more courteous WhatsApp templates */
+(function () {
+  function start() {
+    if (!window.app || !Array.isArray(app.products)) { setTimeout(start, 250); return; }
+
+    const form = document.querySelector('#screen-orders form');
+    if (!form || document.getElementById('order-product-search')) return;
+
+    const oldTotal = document.getElementById('order-total');
+    const oldDetails = document.getElementById('order-details');
+    if (!oldTotal || !oldDetails) return;
+
+    const oldTotalGroup = oldTotal.closest('.form-group');
+    const oldDetailsGroup = oldDetails.closest('.form-group');
+    oldTotalGroup.innerHTML = '<label>المجموع الكلي (IQD) — يُحسب تلقائياً</label><input id="order-total" type="number" min="0" step="1" readonly value="0">';
+    oldDetailsGroup.outerHTML = `
+      <div class="form-group" style="grid-column:1/-1">
+        <label>ابحث عن المنتج بالاسم أو الكود</label>
+        <input id="order-product-search" type="search" autocomplete="off" placeholder="اكتب اسم اللعبة أو كود المنتج...">
+        <div id="order-product-results" class="table-container" style="display:none;max-height:220px;overflow:auto;margin-top:8px"></div>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>المنتجات المختارة والكميات</label>
+        <div id="order-selected-products" class="table-container" style="padding:10px">لم تتم إضافة منتجات بعد.</div>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>ملاحظات إضافية (اختياري)</label>
+        <textarea id="order-details" rows="2" placeholder="أي ملاحظة خاصة بالطلب أو التوصيل"></textarea>
+      </div>`;
+
+    window.orderCart = [];
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const money = n => Number(n || 0).toLocaleString('en-US');
+    function drawCart() {
+      const box = document.getElementById('order-selected-products');
+      const total = window.orderCart.reduce((s, x) => s + x.price * x.qty, 0);
+      document.getElementById('order-total').value = total;
+      box.innerHTML = window.orderCart.length ? `<table><thead><tr><th>المنتج</th><th>السعر</th><th>الكمية</th><th>المجموع</th><th></th></tr></thead><tbody>${
+        window.orderCart.map((x,i)=>`<tr><td><b>${esc(x.name)}</b><br><small>${esc(x.code)}</small></td><td>${money(x.price)}</td><td><input aria-label="الكمية" type="number" min="1" value="${x.qty}" style="width:82px" onchange="orderCartQty(${i},this.value)"></td><td>${money(x.price*x.qty)}</td><td><button type="button" class="btn btn-red" onclick="orderCartRemove(${i})">إزالة</button></td></tr>`).join('')
+      }</tbody></table>` : 'لم تتم إضافة منتجات بعد.';
+    }
+    window.orderCartQty = (i,v) => { if (window.orderCart[i]) { window.orderCart[i].qty = Math.max(1, parseInt(v,10)||1); drawCart(); } };
+    window.orderCartRemove = i => { window.orderCart.splice(i,1); drawCart(); };
+
+    const search = document.getElementById('order-product-search');
+    const results = document.getElementById('order-product-results');
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLocaleLowerCase();
+      if (!q) { results.style.display='none'; results.innerHTML=''; return; }
+      const found = app.products.filter(p => `${p.name} ${p.code}`.toLocaleLowerCase().includes(q)).slice(0,30);
+      results.style.display='block';
+      results.innerHTML = found.length ? `<table><tbody>${found.map((p,i)=>`<tr><td><b>${esc(p.name)}</b><br><small>${esc(p.code)} · المخزون: ${Number(p.stock||0)}</small></td><td>${money(p.sellPrice)} IQD</td><td><button type="button" class="btn" data-order-product="${esc(p.id)}">إضافة</button></td></tr>`).join('')}</tbody></table>` : '<div style="padding:12px">لا توجد نتائج مطابقة.</div>';
+    });
+    results.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-order-product]'); if (!b) return;
+      const p = app.products.find(x => String(x.id) === b.dataset.orderProduct); if (!p) return;
+      const existing = window.orderCart.find(x => String(x.id) === String(p.id));
+      if (existing) existing.qty++;
+      else window.orderCart.push({id:p.id, code:p.code, name:p.name, price:Number(p.sellPrice)||0, qty:1});
+      drawCart(); search.value=''; results.style.display='none'; results.innerHTML='';
+    });
+
+    const originalReset = form.reset.bind(form);
+    form.addEventListener('reset', () => { window.orderCart=[]; setTimeout(drawCart,0); });
+    const originalSave = app.saveOrder.bind(app);
+    app.saveOrder = function(e) {
+      if (!window.orderCart.length) { e.preventDefault(); alert('يرجى اختيار منتج واحد على الأقل قبل حفظ الطلب.'); return; }
+      const details = document.getElementById('order-details').value.trim();
+      const items = window.orderCart.map(x => ({...x}));
+      const total = items.reduce((s,x)=>s+x.price*x.qty,0);
+      const customer = document.getElementById('order-customer').value.trim();
+      const phone = document.getElementById('order-phone').value.trim();
+      const location = document.getElementById('order-location').value.trim();
+      const date = document.getElementById('order-date').value;
+      const deliveryDate = document.getElementById('order-delivery-date').value;
+      e.preventDefault();
+      this.orders.unshift({id:Date.now().toString(),customer,phone,location,date,deliveryDate,total,details,items,status:'pending'});
+      this.saveStorage(); this.renderOrders(); form.reset(); window.orderCart=[]; drawCart();
+      document.getElementById('order-date').value = this.currentDate;
+      alert('تم حفظ الطلب بنجاح. شكراً جزيلاً لثقتكم بنا 🌷');
+    };
+    drawCart();
+
+    /* Courteous, warm and professional phrasing in all three languages */
+    const oldSend = app.sendWhatsApp.bind(app);
+    app.sendWhatsApp = function(type,id) {
+      const isOrder = type === 'order';
+      const item = (isOrder ? this.orders : this.repairs).find(x=>x.id===id);
+      if (!item) return;
+      const langEl = document.getElementById((isOrder?'order-lang-':'repair-lang-')+id);
+      const lang = langEl ? langEl.value : 'ar';
+      let phone = String(item.phone||'').replace(/[^0-9]/g,'');
+      if (phone.startsWith('00')) phone=phone.slice(2);
+      if (phone.startsWith('0')) phone='964'+phone.slice(1);
+      else if (phone.startsWith('7')) phone='964'+phone;
+      if (!phone) { alert('يرجى إدخال رقم هاتف صحيح للزبون.'); return; }
+      const itemsText = (item.items||[]).map(x=>`• ${x.name} (${x.code}) × ${x.qty} — ${(x.price*x.qty).toLocaleString()} IQD`).join('\\n');
+      let msg = '';
+      if (isOrder) {
+        const templates = {
+          ar: `السيد/السيدة ${item.customer} المحترم/ة، أهلاً وسهلاً بكم 🌷\\nيسعدنا تواصلكم معنا، ونشكركم جزيل الشكر على اختياركم وثقتكم الغالية.\\n${itemsText ? '🛍️ تفاصيل طلبكم:\\n'+itemsText+'\\n' : ''}📍 عنوان التوصيل: ${item.location}\\n📅 تاريخ تسجيل الطلب: ${item.date}\\n🚚 موعد التوصيل المتفق عليه: ${item.deliveryDate}\\n💰 الإجمالي: ${Number(item.total||0).toLocaleString()} دينار عراقي${item.details?'\\n📝 ملاحظاتكم: '+item.details:''}\\nإذا كان لديكم أي استفسار أو طلب إضافي، يسعدنا خدمتكم في أي وقت. مع خالص الشكر والتقدير، ونتمنى لكم يوماً جميلاً.`,
+          ku: `بەڕێز ${item.customer}، سڵاو و ڕێزی زۆر 🌷\\nبە دڵخۆشییەوە سوپاسی هەڵبژاردن و متمانە جوانەکەتان دەکەین.\\n${itemsText ? '🛍️ وردەکاری داواکارییەکەتان:\\n'+itemsText+'\\n' : ''}📍 ناونیشانی گەیاندن: ${item.location}\\n📅 بەرواری تۆمارکردنی داواکاری: ${item.date}\\n🚚 ڕۆژی گەیاندن: ${item.deliveryDate}\\n💰 کۆی گشتی: ${Number(item.total||0).toLocaleString()} دیناری عێراقی${item.details?'\\n📝 تێبینییەکان: '+item.details:''}\\nئەگەر هەر پرسیار یان داواکارییەکی ترتان هەبوو، بە خۆشحاڵییەوە لە خزمەتتان دەبین. بە ڕێز و سوپاسەوە، ڕۆژێکی خۆشتان بۆ دەخوازین.`,
+          tr: `Sayın ${item.customer}, merhaba 🌷\\nBizi tercih ettiğiniz ve güvendiğiniz için içtenlikle teşekkür ederiz.\\n${itemsText ? '🛍️ Siparişinizin detayları:\\n'+itemsText+'\\n' : ''}📍 Teslimat adresi: ${item.location}\\n📅 Sipariş kayıt tarihi: ${item.date}\\n🚚 Planlanan teslimat günü: ${item.deliveryDate}\\n💰 Genel toplam: ${Number(item.total||0).toLocaleString()} Irak dinarı${item.details?'\\n📝 Notunuz: '+item.details:''}\\nHerhangi bir sorunuz veya ek talebiniz olursa size memnuniyetle yardımcı oluruz. Anlayışınız ve güveniniz için tekrar teşekkür eder, güzel bir gün dileriz.`
+        };
+        msg = templates[lang] || templates.ar;
+      } else {
+        const templates = {
+          ar: `السيد/السيدة ${item.customer} المحترم/ة، تحية طيبة 🌷\\nنشكركم من القلب على ثقتكم بنا، ويسعدنا استقبال جهازكم لخدمة الصيانة.\\n🧸 الجهاز: ${item.device}\\n🔧 وصف المشكلة: ${item.issue}\\n${item.location?'📍 الموقع: '+item.location+'\\n':''}📅 تاريخ الاستلام: ${item.date}\\n${item.deliveryDate?'🚚 موعد التسليم المتوقع: '+item.deliveryDate+'\\n':''}💰 أجرة الصيانة: ${Number(item.price||0).toLocaleString()} دينار عراقي\\nسنولي جهازكم كل العناية والاهتمام، وسنتواصل معكم فور توفر أي تحديث أو عند اكتمال العمل. إذا احتجتم إلى أي استفسار، فنحن في خدمتكم بكل سرور. مع فائق الاحترام والتقدير.`,
+          ku: `بەڕێز ${item.customer}، سڵاو و ڕێز 🌷\\nلە دڵەوە سوپاسی متمانەتان دەکەین. بە خۆشحاڵییەوە ئامێرەکەتان بۆ خزمەتی چاککردنەوە وەرگرتووە.\\n🧸 ئامێر: ${item.device}\\n🔧 وەسفی کێشەکە: ${item.issue}\\n${item.location?'📍 شوێن: '+item.location+'\\n':''}📅 بەرواری وەرگرتن: ${item.date}\\n${item.deliveryDate?'🚚 ڕۆژی پێشبینیکراوی گەڕاندنەوە: '+item.deliveryDate+'\\n':''}💰 کرێی چاککردنەوە: ${Number(item.price||0).toLocaleString()} دیناری عێراقی\\nبە وردی و گرنگییەوە چاودێری ئامێرەکەتان دەکەین و لە هەر نوێکارییەک ئاگادارتان دەکەینەوە. بۆ هەر پرسیارێک بە خۆشحاڵی لە خزمەتتان دەبین. بە ڕێزەوە.`,
+          tr: `Sayın ${item.customer}, merhaba 🌷\\nBize duyduğunuz güven için içtenlikle teşekkür ederiz. Cihazınızı memnuniyetle servis kaydımıza aldık.\\n🧸 Cihaz: ${item.device}\\n🔧 Arıza açıklaması: ${item.issue}\\n${item.location?'📍 Konum: '+item.location+'\\n':''}📅 Teslim alma tarihi: ${item.date}\\n${item.deliveryDate?'🚚 Tahmini teslim tarihi: '+item.deliveryDate+'\\n':''}💰 Tamir ücreti: ${Number(item.price||0).toLocaleString()} Irak dinarı\\nCihazınızla özenle ilgileneceğiz. Herhangi bir gelişme olduğunda veya işlem tamamlandığında sizi bilgilendireceğiz. Sorularınız olursa size yardımcı olmaktan memnuniyet duyarız. Anlayışınız için teşekkür eder, saygılarımızı sunarız.`
+        };
+        msg = templates[lang] || templates.ar;
+      }
+      // Audible confirmation tone: four clear, strong "ding" notes on the current device.
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const audio = new AudioCtx();
+          if (audio.state === 'suspended') audio.resume();
+          const master = audio.createGain();
+          master.gain.setValueAtTime(0.68, audio.currentTime);
+          master.connect(audio.destination);
+          [880, 1175, 988, 1397].forEach((frequency, index) => {
+            const startAt = audio.currentTime + index * 0.24;
+            const oscillator = audio.createOscillator();
+            const envelope = audio.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frequency, startAt);
+            envelope.gain.setValueAtTime(0.0001, startAt);
+            envelope.gain.exponentialRampToValueAtTime(0.85, startAt + 0.025);
+            envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.21);
+            oscillator.connect(envelope);
+            envelope.connect(master);
+            oscillator.start(startAt);
+            oscillator.stop(startAt + 0.23);
+          });
+          setTimeout(() => audio.close().catch(() => {}), 1400);
+        }
+      } catch (soundError) { console.warn('Message chime unavailable:', soundError); }
+      window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank','noopener');
+    };
+  }
+  start();
+})();
+</script>
+
+
+<script id="cloud-sync-integration">
+(() => {
+  const DATA_KEYS = {
+    categories: 'toy_categories', products: 'toy_products', workers: 'toy_workers',
+    transactions: 'toy_transactions', cashOuts: 'toy_cashouts', repairs: 'toy_repairs',
+    orders: 'toy_orders', storeInvoices: 'toy_store_invoices',
+    workerInvoices: 'toy_worker_invoices', dailyEarnings: 'toy_daily_earnings'
+  };
+  const CONFIG_KEY = 'toy_cloud_config_v1';
+  const $ = id => document.getElementById(id);
+  const cloudSync = window.cloudSync = {
+    client: null, user: null, channel: null, timer: null, suppress: false,
+    togglePanel() { const p=$('cloud-panel'); p.style.display=p.style.display==='none'?'block':'none'; },
+    status(message, good=false) { const e=$('cloud-status'); if(e){e.textContent=message;e.style.background=good?'#E8F1E7':'#F2ECE4';e.style.color=good?'#557A58':'#273247';} },
+    readConfig() { try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}')}catch(_){return {}} },
+    async connect() {
+      const url=$('cloud-url').value.trim().replace(/\/$/,''); const key=$('cloud-key').value.trim();
+      if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url) || !key){this.status('Proje URL veya publishable/anon anahtarı geçersiz.');return;}
+      localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));
+      if(!window.supabase?.createClient){this.status('Supabase kitaplığı yüklenemedi. İnternet bağlantısını kontrol et.');return;}
+      if(this.channel){await this.client.removeChannel(this.channel);this.channel=null;}
+      this.client=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+      const {data,error}=await this.client.auth.getSession();
+      if(error){this.status('Bağlantı hatası: '+error.message);return;}
+      this.user=data.session?.user||null;
+      this.status(this.user?'Bağlandı: '+this.user.email+' — senkronizasyon hazır':'Proje bağlantısı tamam. Şimdi e-posta ile giriş yap.',true);
+      if(this.user)this.watch();
+    },
+    async ensureClient(){if(!this.client)await this.connect();return !!this.client;},
+    async signIn(){if(!await this.ensureClient())return;const {data,error}=await this.client.auth.signInWithPassword({email:$('cloud-email').value.trim(),password:$('cloud-password').value});if(error){this.status('Giriş başarısız: '+error.message);return;}this.user=data.user;this.status('Giriş yapıldı: '+this.user.email,true);this.watch();},
+    async signUp(){if(!await this.ensureClient())return;const {data,error}=await this.client.auth.signUp({email:$('cloud-email').value.trim(),password:$('cloud-password').value});if(error){this.status('Hesap oluşturulamadı: '+error.message);return;}this.status(data.session?'Hesap oluşturuldu ve giriş yapıldı.':'Hesap oluşturuldu. E-postana gelen doğrulama bağlantısını onayla, sonra giriş yap.',true);if(data.user){this.user=data.user;if(data.session)this.watch();}},
+    async signOut(){if(!this.client)return;const {error}=await this.client.auth.signOut();if(error){this.status(error.message);return;}this.user=null;if(this.channel){await this.client.removeChannel(this.channel);this.channel=null;}this.status('Bulut hesabından çıkış yapıldı.');},
+    snapshot(app){const payload={};for(const [prop] of Object.entries(DATA_KEYS))payload[prop]=app[prop];return payload;},
+    async pushLocal(){if(!this.user){this.status('Önce bulut hesabına giriş yap.');return;}const payload=this.snapshot(window.app);const {error}=await this.client.from('toy_store_state').upsert({user_id:this.user.id,payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error){this.status('Buluta aktarılamadı: '+error.message);return;}this.status('Bu cihazdaki kayıtlar buluta aktarıldı.',true);},
+    async pullCloud(){if(!this.user){this.status('Önce bulut hesabına giriş yap.');return;}const {data,error}=await this.client.from('toy_store_state').select('payload').eq('user_id',this.user.id).maybeSingle();if(error){this.status('Bulut verisi okunamadı: '+error.message);return;}if(!data){this.status('Bulutta henüz kayıt yok. Bu cihazdaki verileri buluta aktarabilirsin.');return;}this.apply(data.payload);this.status('Bulut verileri bu cihaza yüklendi.',true);},
+    apply(payload){if(!payload||typeof payload!=='object')return;this.suppress=true;try{for(const [prop,key] of Object.entries(DATA_KEYS)){if(payload[prop]!==undefined){window.app[prop]=payload[prop];localStorage.setItem(key,JSON.stringify(payload[prop]));}}window.app.renderAll();}finally{this.suppress=false;}},
+    schedule(app){if(!this.user||!this.client)return;clearTimeout(this.timer);this.timer=setTimeout(async()=>{const {error}=await this.client.from('toy_store_state').upsert({user_id:this.user.id,payload:this.snapshot(app),updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)this.status('Yerel kayıt yapıldı; bulut senkronizasyon hatası: '+error.message);else this.status('☁️ Çevrimiçi — son kayıt senkronize edildi',true);},900);},
+    watch(){if(!this.client||!this.user)return;if(this.channel)this.client.removeChannel(this.channel);this.channel=this.client.channel('toy-store-live-'+this.user.id).on('postgres_changes',{event:'*',schema:'public',table:'toy_store_state',filter:'user_id=eq.'+this.user.id},payload=>{if(payload.new?.payload){this.apply(payload.new.payload);this.status('Diğer cihazdan gelen değişiklikler eşitlendi.',true);}}).subscribe(status=>{if(status==='SUBSCRIBED')this.status('☁️ Canlı bağlantı açık — gerçek zamanlı senkronizasyon aktif',true);});}
+  };
+  window.addEventListener('load',async()=>{const c=cloudSync.readConfig();if(c.url)$('cloud-url').value=c.url;if(c.key)$('cloud-key').value=c.key;if(c.url&&c.key)await cloudSync.connect();});
+})();
+</script>
+
+</body>
+</html>
