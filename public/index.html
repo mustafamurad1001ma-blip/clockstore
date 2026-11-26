@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متجر الألعاب للأطفال - Toy Store Management System</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -442,33 +441,30 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
 
     <div class="user-info">
       👤 <span id="current-user-display" style="color: #007AFF;">المستخدم</span>
-      <button class="btn-tool" type="button" onclick="cloudSync.togglePanel()" style="border:0;cursor:pointer">☁️ سحابة / Online</button>
+      <button class="btn-tool" type="button" onclick="cloudSync.togglePanel()" style="border:0;cursor:pointer"><span id="live-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#B8B2A7;margin-inline-end:6px;vertical-align:middle"></span><span id="live-label">Canlı kayıt</span></button>
       <button class="btn-logout" onclick="app.logout()">خروج</button>
     </div>
   </header>
 
 
   <section id="cloud-panel" class="card" style="display:none;position:fixed;z-index:4000;top:84px;left:16px;width:min(540px,calc(100vw - 32px));max-height:82vh;overflow:auto;box-shadow:0 22px 70px rgba(0,0,0,.22);border:1px solid #E5D9CA">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><div class="card-title" style="margin:0">☁️ Online veritabanı ve canlı senkronizasyon</div><button class="btn-logout" onclick="cloudSync.togglePanel()" type="button">✕</button></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><div class="card-title" style="margin:0">⚡ Gerçek zamanlı sistem / النظام المباشر</div><button class="btn-logout" onclick="cloudSync.togglePanel()" type="button">✕</button></div>
     <div id="cloud-status" style="padding:10px 12px;border-radius:12px;background:#F2ECE4;margin-bottom:14px;font-weight:700">Bağlantı kurulmadı</div>
+    <p style="font-size:.88rem;color:#77766F;margin-bottom:12px;line-height:1.6">Yapılan her işlem (satış, iade, ürün, stok, sipariş, tamir, fatura, çalışan, kasa…) anında online veritabanına kaydedilir ve aynı mağaza kodunu kullanan tüm cihazlarda canlı olarak güncellenir. İnternet kesilirse işlemler cihazda bekletilir ve bağlantı gelince otomatik gönderilir.</p>
     <div class="form-grid">
-      <div class="form-group" style="grid-column:1/-1"><label>Supabase proje URL</label><input id="cloud-url" type="url" placeholder="https://xxxx.supabase.co" autocomplete="url"></div>
-      <div class="form-group" style="grid-column:1/-1"><label>Publishable / anon key</label><input id="cloud-key" type="password" placeholder="sb_publishable_... veya anon key" autocomplete="off"></div>
-      <div class="form-group"><label>E-posta</label><input id="cloud-email" type="email" placeholder="E-posta" autocomplete="username"></div>
-      <div class="form-group"><label>Hesap şifresi</label><input id="cloud-password" type="password" placeholder="En az 8 karakter" autocomplete="current-password"></div>
+      <div class="form-group" style="grid-column:1/-1"><label for="sync-code">Mağaza senkronizasyon kodu / رمز المزامنة</label><input id="sync-code" type="password" placeholder="En az 6 karakter — tüm cihazlarda aynı kodu kullanın" autocomplete="off"></div>
+      <div class="form-group" style="grid-column:1/-1"><label for="sync-device">Bu cihazın adı / اسم الجهاز</label><input id="sync-device" type="text" placeholder="Örn: Kasa bilgisayarı, Ali telefon" maxlength="60"></div>
     </div>
     <div class="tools" style="margin-top:14px">
-      <button class="btn" type="button" onclick="cloudSync.connect()">Bağlantıyı kaydet</button>
-      <button class="btn btn-green" type="button" onclick="cloudSync.signIn()">Giriş yap</button>
-      <button class="btn btn-purple" type="button" onclick="cloudSync.signUp()">Hesap oluştur</button>
-      <button class="btn btn-red" type="button" onclick="cloudSync.signOut()">Çıkış</button>
+      <button class="btn btn-green" type="button" onclick="cloudSync.connectFromForm()">Bağlan ve canlı kaydı başlat</button>
+      <button class="btn" type="button" onclick="cloudSync.openLog()">📝 İşlem kayıtları</button>
+      <button class="btn btn-red" type="button" onclick="cloudSync.disconnect()">Bağlantıyı kes</button>
     </div>
     <div style="border-top:1px solid #E9E0D5;margin:16px 0;padding-top:14px">
       <div style="font-weight:800;margin-bottom:8px">Veri aktarımı</div>
-      <p style="font-size:.88rem;color:#77766F;margin-bottom:10px">İlk bağlantıda hangi verinin kullanılacağını sen seç. Buluttan yükleme mevcut cihazdaki kayıtların yerine geçer. Buluta gönderme ise bu cihazdaki kayıtları ortak veritabanına aktarır.</p>
-      <div class="tools"><button class="btn btn-green" type="button" onclick="cloudSync.pushLocal()">Bu cihazdaki verileri buluta aktar</button><button class="btn" type="button" onclick="cloudSync.pullCloud()">Bulut verilerini bu cihaza yükle</button></div>
+      <div class="tools"><button class="btn btn-purple" type="button" onclick="cloudSync.pushLocal()">Bu cihazdaki verileri buluta aktar</button><button class="btn" type="button" onclick="cloudSync.pullCloud()">Bulut verilerini bu cihaza yükle</button></div>
     </div>
-    <div style="font-size:.82rem;color:#77766F;line-height:1.6">Güvenlik: Ana giriş PIN'i ve finans PIN'i buluta aktarılmaz. Bulut bağlantısı için Supabase SQL kurulum dosyasındaki tablo ve güvenlik politikaları bir kez çalıştırılmalıdır. Değişiklikler giriş yapılmış cihazlarda gerçek zamanlı paylaşılır.</div>
+    <div style="font-size:.82rem;color:#77766F;line-height:1.6">Güvenlik: Senkronizasyon kodu bir şifre gibidir; sadece güvendiğiniz kişilerle paylaşın. Kod sunucuda saklanmaz. Giriş PIN'i ve finans PIN'i buluta aktarılmaz.</div>
   </section>
 
   <!-- Main Container -->
@@ -485,6 +481,7 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
       <button class="nav-btn" onclick="app.navigate('invoices', event)">🧾 قسم الفواتير (Invoices)</button>
       <button class="nav-btn" onclick="app.navigate('workers', event)">👥 العمال والرواتب</button>
       <button class="nav-btn" onclick="app.navigate('financial', event)">💰 القسم المالي</button>
+      <button class="nav-btn" onclick="app.navigate('activity', event)">📝 سجل العمليات (Canlı kayıt)</button>
       <button class="nav-btn" onclick="app.navigate('settings', event)">⚙️ الإعدادات</button>
     </nav>
 
@@ -1076,6 +1073,26 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
       </div>
 
       <!-- 10. SETTINGS SCREEN -->
+      <div id="screen-activity" class="screen">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div class="card-title" style="margin:0">📝 سجل العمليات المباشر / Canlı işlem kaydı</div>
+            <div class="tools" style="margin:0">
+              <input id="activity-filter" type="search" placeholder="بحث / Ara…" style="min-width:180px" oninput="cloudSync.renderLog()">
+              <button class="btn" type="button" onclick="cloudSync.loadLog()">تحديث 🔄</button>
+            </div>
+          </div>
+          <div id="activity-status" style="font-size:.88rem;color:var(--text-muted);margin-bottom:10px"></div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>الوقت / Zaman</th><th>القسم / Bölüm</th><th>العملية / İşlem</th><th>التفاصيل / Detay</th><th>المستخدم / Kullanıcı</th><th>الجهاز / Cihaz</th></tr></thead>
+              <tbody id="activity-body"></tbody>
+            </table>
+          </div>
+          <div style="text-align:center;margin-top:12px"><button id="activity-more" class="btn" type="button" style="display:none" onclick="cloudSync.loadLog(true)">المزيد / Daha fazla</button></div>
+        </div>
+      </div>
+
       <div id="screen-settings" class="screen">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
           <!-- Category Management -->
@@ -1444,6 +1461,7 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
 
         if (screenName === 'orders') this.renderOrders();
         if (screenName === 'repair') this.renderRepairs();
+        if (screenName === 'activity' && window.cloudSync) window.cloudSync.loadLog();
         if (screenName === 'financial' && !this.finAuthed) {
           document.getElementById('fin-content').style.display = 'none';
           document.getElementById('fin-pin-box').style.display = 'block';
@@ -2605,6 +2623,7 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
             Object.keys(data).forEach(key => {
               localStorage.setItem(key, data[key]);
             });
+            localStorage.setItem('toy_live_force_push', '1');
             alert('تم استيراد النسخة الاحتياطية بنجاح! 📥');
             window.location.reload();
           } catch (err) {
@@ -2624,7 +2643,7 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
 
     let app;
     window.onload = () => {
-      app = new ToyStoreApp();
+      app = window.app = new ToyStoreApp();
     };
   </script>
 
@@ -3036,48 +3055,7 @@ button,.btn,.btn-tool,.nav-btn{line-height:1.35;white-space:normal}
 </script>
 
 
-<script id="cloud-sync-integration">
-(() => {
-  const DATA_KEYS = {
-    categories: 'toy_categories', products: 'toy_products', workers: 'toy_workers',
-    transactions: 'toy_transactions', cashOuts: 'toy_cashouts', repairs: 'toy_repairs',
-    orders: 'toy_orders', storeInvoices: 'toy_store_invoices',
-    workerInvoices: 'toy_worker_invoices', dailyEarnings: 'toy_daily_earnings'
-  };
-  const CONFIG_KEY = 'toy_cloud_config_v1';
-  const $ = id => document.getElementById(id);
-  const cloudSync = window.cloudSync = {
-    client: null, user: null, channel: null, timer: null, suppress: false,
-    togglePanel() { const p=$('cloud-panel'); p.style.display=p.style.display==='none'?'block':'none'; },
-    status(message, good=false) { const e=$('cloud-status'); if(e){e.textContent=message;e.style.background=good?'#E8F1E7':'#F2ECE4';e.style.color=good?'#557A58':'#273247';} },
-    readConfig() { try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}')}catch(_){return {}} },
-    async connect() {
-      const url=$('cloud-url').value.trim().replace(/\/$/,''); const key=$('cloud-key').value.trim();
-      if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url) || !key){this.status('Proje URL veya publishable/anon anahtarı geçersiz.');return;}
-      localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));
-      if(!window.supabase?.createClient){this.status('Supabase kitaplığı yüklenemedi. İnternet bağlantısını kontrol et.');return;}
-      if(this.channel){await this.client.removeChannel(this.channel);this.channel=null;}
-      this.client=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-      const {data,error}=await this.client.auth.getSession();
-      if(error){this.status('Bağlantı hatası: '+error.message);return;}
-      this.user=data.session?.user||null;
-      this.status(this.user?'Bağlandı: '+this.user.email+' — senkronizasyon hazır':'Proje bağlantısı tamam. Şimdi e-posta ile giriş yap.',true);
-      if(this.user)this.watch();
-    },
-    async ensureClient(){if(!this.client)await this.connect();return !!this.client;},
-    async signIn(){if(!await this.ensureClient())return;const {data,error}=await this.client.auth.signInWithPassword({email:$('cloud-email').value.trim(),password:$('cloud-password').value});if(error){this.status('Giriş başarısız: '+error.message);return;}this.user=data.user;this.status('Giriş yapıldı: '+this.user.email,true);this.watch();},
-    async signUp(){if(!await this.ensureClient())return;const {data,error}=await this.client.auth.signUp({email:$('cloud-email').value.trim(),password:$('cloud-password').value});if(error){this.status('Hesap oluşturulamadı: '+error.message);return;}this.status(data.session?'Hesap oluşturuldu ve giriş yapıldı.':'Hesap oluşturuldu. E-postana gelen doğrulama bağlantısını onayla, sonra giriş yap.',true);if(data.user){this.user=data.user;if(data.session)this.watch();}},
-    async signOut(){if(!this.client)return;const {error}=await this.client.auth.signOut();if(error){this.status(error.message);return;}this.user=null;if(this.channel){await this.client.removeChannel(this.channel);this.channel=null;}this.status('Bulut hesabından çıkış yapıldı.');},
-    snapshot(app){const payload={};for(const [prop] of Object.entries(DATA_KEYS))payload[prop]=app[prop];return payload;},
-    async pushLocal(){if(!this.user){this.status('Önce bulut hesabına giriş yap.');return;}const payload=this.snapshot(window.app);const {error}=await this.client.from('toy_store_state').upsert({user_id:this.user.id,payload,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error){this.status('Buluta aktarılamadı: '+error.message);return;}this.status('Bu cihazdaki kayıtlar buluta aktarıldı.',true);},
-    async pullCloud(){if(!this.user){this.status('Önce bulut hesabına giriş yap.');return;}const {data,error}=await this.client.from('toy_store_state').select('payload').eq('user_id',this.user.id).maybeSingle();if(error){this.status('Bulut verisi okunamadı: '+error.message);return;}if(!data){this.status('Bulutta henüz kayıt yok. Bu cihazdaki verileri buluta aktarabilirsin.');return;}this.apply(data.payload);this.status('Bulut verileri bu cihaza yüklendi.',true);},
-    apply(payload){if(!payload||typeof payload!=='object')return;this.suppress=true;try{for(const [prop,key] of Object.entries(DATA_KEYS)){if(payload[prop]!==undefined){window.app[prop]=payload[prop];localStorage.setItem(key,JSON.stringify(payload[prop]));}}window.app.renderAll();}finally{this.suppress=false;}},
-    schedule(app){if(!this.user||!this.client)return;clearTimeout(this.timer);this.timer=setTimeout(async()=>{const {error}=await this.client.from('toy_store_state').upsert({user_id:this.user.id,payload:this.snapshot(app),updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)this.status('Yerel kayıt yapıldı; bulut senkronizasyon hatası: '+error.message);else this.status('☁️ Çevrimiçi — son kayıt senkronize edildi',true);},900);},
-    watch(){if(!this.client||!this.user)return;if(this.channel)this.client.removeChannel(this.channel);this.channel=this.client.channel('toy-store-live-'+this.user.id).on('postgres_changes',{event:'*',schema:'public',table:'toy_store_state',filter:'user_id=eq.'+this.user.id},payload=>{if(payload.new?.payload){this.apply(payload.new.payload);this.status('Diğer cihazdan gelen değişiklikler eşitlendi.',true);}}).subscribe(status=>{if(status==='SUBSCRIBED')this.status('☁️ Canlı bağlantı açık — gerçek zamanlı senkronizasyon aktif',true);});}
-  };
-  window.addEventListener('load',async()=>{const c=cloudSync.readConfig();if(c.url)$('cloud-url').value=c.url;if(c.key)$('cloud-key').value=c.key;if(c.url&&c.key)await cloudSync.connect();});
-})();
-</script>
+<script src="/live-sync.js"></script>
 
 </body>
 </html>
